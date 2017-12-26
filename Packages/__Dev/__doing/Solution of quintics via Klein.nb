@@ -1,0 +1,427 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     14500,        419]
+NotebookOptionsPosition[     11146,        346]
+NotebookOutlinePosition[     12026,        374]
+CellTagsIndexPosition[     11983,        371]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Solution of quintics via Klein", "Section",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"2c0ad798-0aa7-485c-ac04-d77029bfaf79"],
+
+Cell["\<\
+We assume that the general quintic 
+a0 x^5 + a1 x^4 + a2 x^3 + a3 x^2 + a4 x + a5 = 0
+has been  reduced to a  principal quintic
+y^5 + 5a y^2 + 5 b y + c = 0 by an appropriate Tschirnhaus transformation. 
+(The factors 5 are historical.)
+To solve for the roots yi of the principal quintic we make the following \
+\"ansatz\" (educated guess):
+yi = l f /H Wi + m f^3/H/T ti Wi  (i = 0, ..., 4)
+The quantities Wi,  f, H, T and ti are:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"e73d0ff4-d387-4985-8a8f-5b5533748a89"],
+
+Cell["\<\
+f[u_, v_] = u v (u^10 + 11 u^5 v^5 - v^10);
+H[u_, v_] = -u^20 - v^20 + 228(u^15 v^5 - u^5 v^15) - 494 u^10 v^10;
+T[u_, v_] = u^30 + v^30 + 522 (u^25 v^5 - u^5 v^25) - 
+                            10005 (u^20 v^10 + u^10 v^20);
+W[k_, u_, v_] = -e^(4k) u^8 + e^(3k) u^7 v - 7 e^(2k) u^6 v^2 - 
+            7 e^k u^5 v^3 + 7 e^(4k) u^3 v^5 - 
+            7 e^(3k) u^2 v^6 - e^(2k) u v^7 - e^k v^8;
+t[k_, u_, v_] = e^(3k) u^6 + 2 e^(2k) u^5 v - 5 e^k u^4 v^2 - 
+             5e^(4k) u^2 v^4 - 2 e^(3k) u v^5 + e^(2k) v^6; 
+e = Exp[2Pi I/5];\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"8717d36f-0902-446c-b6d9-1afba54ef928"],
+
+Cell["The variables u and v in the above equations are given by:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"79b95801-f0c8-4beb-80d8-56d8bc7fd01b"],
+
+Cell["\<\
+u[Z_] := (12)^(1/20) 1/(1728Z)^(1/60)*
+                     Hypergeometric2F1[-1/60,29/60,4/5,1728 Z];
+v[Z_] := 1/(12^11)^(1/20) (1/(1728 Z))^(-11/60)*
+                     Hypergeometric2F1[11/60,41/60,6/5,1728 Z];\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"8436a354-fd9d-4c53-a63c-63440bf87ced"],
+
+Cell["\<\
+Solving the following system of four algebraic equations (a, b, and c come \
+from the principal quintic) determines m, l, and Z (see below) :\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"27d4e49e-da16-4b92-aaf4-fb65f022c500"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+{a V == 8 l^3 + l^2 m + 72 l m^2 Z + m^3 Z,
+ b V == - l^4 + 18 l^2 m^2 Z + l m^3 Z + 27 m^4 Z^2,
+ c V ==   l^5 - 10 l^3 m^2 Z + 45 l m^4 Z^2 + m^5 Z^2, 
+ 1 + V Z == 1728 Z}\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"f10bb080-b665-4294-8b90-69998620f980"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"a", " ", "V"}], "\[Equal]", 
+    RowBox[{
+     RowBox[{"8", " ", 
+      SuperscriptBox["l", "3"]}], "+", 
+     RowBox[{
+      SuperscriptBox["l", "2"], " ", "m"}], "+", 
+     RowBox[{"72", " ", "l", " ", 
+      SuperscriptBox["m", "2"], " ", "Z"}], "+", 
+     RowBox[{
+      SuperscriptBox["m", "3"], " ", "Z"}]}]}], ",", 
+   RowBox[{
+    RowBox[{"b", " ", "V"}], "\[Equal]", 
+    RowBox[{
+     RowBox[{"-", 
+      SuperscriptBox["l", "4"]}], "+", 
+     RowBox[{"18", " ", 
+      SuperscriptBox["l", "2"], " ", 
+      SuperscriptBox["m", "2"], " ", "Z"}], "+", 
+     RowBox[{"l", " ", 
+      SuperscriptBox["m", "3"], " ", "Z"}], "+", 
+     RowBox[{"27", " ", 
+      SuperscriptBox["m", "4"], " ", 
+      SuperscriptBox["Z", "2"]}]}]}], ",", 
+   RowBox[{
+    RowBox[{"c", " ", "V"}], "\[Equal]", 
+    RowBox[{
+     SuperscriptBox["l", "5"], "-", 
+     RowBox[{"10", " ", 
+      SuperscriptBox["l", "3"], " ", 
+      SuperscriptBox["m", "2"], " ", "Z"}], "+", 
+     RowBox[{"45", " ", "l", " ", 
+      SuperscriptBox["m", "4"], " ", 
+      SuperscriptBox["Z", "2"]}], "+", 
+     RowBox[{
+      SuperscriptBox["m", "5"], " ", 
+      SuperscriptBox["Z", "2"]}]}]}], ",", 
+   RowBox[{
+    RowBox[{"1", "+", 
+     RowBox[{"V", " ", "Z"}]}], "\[Equal]", 
+    RowBox[{"1728", " ", "Z"}]}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.7232065522598314`*^9},ExpressionUUID->"2c242654-1e1e-40ce-867e-\
+887bb8604702"]
+}, Open  ]],
+
+Cell["\<\
+The variables u and v are a solution of the icosahedral equation lhsIcoEq[u, \
+v] = 0. \
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"7be243b4-8608-424d-b1a2-cd0df8bccc04"],
+
+Cell["\<\
+lhsIcoEq[u_, v_, Z_]:=
+     u^5 v^5 (u^10 + 11 u^5 v^5 - v^10)^5 - 
+     (u^30 + v^30 - 10005 (u^20 v^10 + u^10 v^20) + 
+     522 (u^25 v^5 - u^5 v^25))^2 Z\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"e104c65f-efb2-4ba8-ae5a-fb17737dce95"],
+
+Cell["\<\
+The icosahedral equation is sometimes also written in the form:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"94429c73-f96b-45ce-b077-20b7c7ceb772"],
+
+Cell[CellGroupData[{
+
+Cell["lhsIcoEq[z, 1, Z]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"a3061cb4-0e23-4260-a0d9-c929d8496c04"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   SuperscriptBox["z", "5"], " ", 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", 
+      RowBox[{"11", " ", 
+       SuperscriptBox["z", "5"]}], "+", 
+      SuperscriptBox["z", "10"]}], ")"}], "5"]}], "-", 
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      SuperscriptBox["z", "30"], "-", 
+      RowBox[{"10005", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["z", "10"], "+", 
+         SuperscriptBox["z", "20"]}], ")"}]}], "+", 
+      RowBox[{"522", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", 
+          SuperscriptBox["z", "5"]}], "+", 
+         SuperscriptBox["z", "25"]}], ")"}]}]}], ")"}], "2"], " ", 
+   "Z"}]}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.72320655804116*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"3a5e60e0-24fb-499a-91dc-05dd0de09749"]
+}, Open  ]],
+
+Cell["\<\
+However, it is more appropriate to keep u and v for numerical reasons.
+Here is a numerical check:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"c03b1464-7cb4-4b7d-8148-4a2ddc936805"],
+
+Cell[CellGroupData[{
+
+Cell["lhsIcoEq[ N[u[2.-0.7I]], N[v[2.-0.7I]], 2.-0.7I ] // Chop", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"1df0b13d-3ad2-4e78-afca-70553d5438ad"],
+
+Cell[BoxData["0"], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.7232065614993095`*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"5b0582d4-fcb3-4f4c-9df0-8817e051172a"]
+}, Open  ]],
+
+Cell["\<\
+That the above ansatz reduces to the above algebraic system in m, l, Z, and V \
+can be verified in a straightforward but rather lengthly calculation. That \
+u[Z] and v[z] are solutions of the icosahedral equation can be verified by \
+the monodromy group properties of the solutions of the hypergeometric \
+differential equation.
+Putting all this together we have the following implementation for Klein's \
+approach for solving quintics:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"f6e1328c-22f9-487b-98c5-94bbf1be5aaa"],
+
+Cell["\<\
+KleinSolve[p_ == 0, y_] :=
+Module[{a, b, c, n, l, m, w, Z, fm, Hm, Tm, um, vm, sol},
+{a, b, c} = 
+     ({1/5, 1/5, 1} (Coefficient[p, y, #]& /@ {2, 1, 0}))/
+                     Coefficient[p, y, 5] ;
+l = (-#2/#1/2+Sqrt[#2^2/#1^2/4-#3/#1])&[
+   (a^4+a b c-b^3),-(11a^3 b-a c^2+2b^2c),(64 a^2 b^2-
+                                    27a^3c-b c^2)];
+w = (l b + c)/a; V=(l^2-3w)^3/(l c-w b);
+Z = 1/(1728-V); m = (V a-8 l^3-72 l w)/(l^2+w);
+um = u[Z]; vm = v[Z]; fm = f[um, vm]; 
+Hm = H[um, vm]; Tm = T[um, vm];
+{y->#}& /@  Sort[Table[l fm W[k, um, vm]/Hm +
+          m fm^3 t[k, um, vm] W[k, um, vm]/Tm/Hm,{k, 0 ,4}]] ] /;
+                 MatchQ[CoefficientList[p, y],{_, _ ,_, 0, 0, _}]       \
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"dd8650b7-edb2-471f-b040-d9fb889fb54e"],
+
+Cell["\<\
+Here is a numerical example for solving a quintic using Klein's approach:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"1b12cf57-286b-41a3-a8da-8dc5879b489b"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+KleinSolve[y^5 + 5.I y^2 -12. y + 1.- I == 0, y] //N // Chop // Sort\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"c641be14-f3bb-4dad-9077-8918902c6c28"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "1.9045622974614882`"}], "-", 
+      RowBox[{"0.3331347633715126`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "0.043053072143816706`"}], "-", 
+      RowBox[{"1.4308318411583978`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "0.012003051009727594`"}], "+", 
+      RowBox[{"2.2009410800734504`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{"0.0895118029858113`", "\[VeryThinSpace]", "-", 
+      RowBox[{"0.0828539140488862`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{"1.8701066176292205`", "\[VeryThinSpace]", "-", 
+      RowBox[{"0.35412056149465276`", " ", "\[ImaginaryI]"}]}]}], "}"}]}], 
+  "}"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.7232065660018473`*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"9fd0b463-26c5-403c-b608-e75ad9796fe3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["NSolve[y^5 + 5.I y^2 -12. y + 1.- I == 0, y]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"974679fd-c576-470e-a4b9-5b921f9589f6"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "1.9045622974614862`"}], "-", 
+      RowBox[{"0.3331347633715131`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "0.043053072143816325`"}], "-", 
+      RowBox[{"1.430831841158396`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{
+      RowBox[{"-", "0.012003051009727086`"}], "+", 
+      RowBox[{"2.2009410800734495`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{"0.08951180298581089`", "\[VeryThinSpace]", "-", 
+      RowBox[{"0.08285391404888665`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+   
+   RowBox[{"{", 
+    RowBox[{"y", "\[Rule]", 
+     RowBox[{"1.8701066176292191`", "\[VeryThinSpace]", "-", 
+      RowBox[{"0.3541205614946533`", " ", "\[ImaginaryI]"}]}]}], "}"}]}], 
+  "}"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.723206568524263*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"4338b4f2-529f-4bf0-90fe-1364f1bb9d32"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowToolbars->{},
+CellGrouping->Manual,
+WindowSize->{915, 642},
+WindowMargins->{{44, Automatic}, {Automatic, 1}},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+ShowCellLabel->True,
+ShowCellTags->False,
+FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (2017\:5e7410\:67082\
+\:65e5)",
+StyleDefinitions->"Default.nb",
+PrivateNotebookOptions -> {"ColorPalette" -> {RGBColor, -1}},
+RenderingOptions -> {"ObjectDithering" -> True},
+RenderingOptions -> {"RasterDithering" -> False},
+MacintoshSystemPageSetup -> \
+"AVU/IFiQKFD000000V:^/09R]g0000000OVaH097bCP0AP1Y06`0I@1^0642HZj`\n\
+0V:gT0000001nK500TO9>000000000000000009R[[0000000000000000000000\n\
+00000000000000000000000000000000"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 153, 3, 66, "Section",ExpressionUUID->"2c0ad798-0aa7-485c-ac04-d77029bfaf79",
+ Evaluatable->False],
+Cell[736, 27, 557, 13, 188, "Text",ExpressionUUID->"e73d0ff4-d387-4985-8a8f-5b5533748a89",
+ Evaluatable->False],
+Cell[1296, 42, 644, 13, 162, "Input",ExpressionUUID->"8717d36f-0902-446c-b6d9-1afba54ef928"],
+Cell[1943, 57, 178, 3, 34, "Text",ExpressionUUID->"79b95801-f0c8-4beb-80d8-56d8bc7fd01b",
+ Evaluatable->False],
+Cell[2124, 62, 323, 7, 72, "Input",ExpressionUUID->"8436a354-fd9d-4c53-a63c-63440bf87ced"],
+Cell[2450, 71, 269, 6, 56, "Text",ExpressionUUID->"27d4e49e-da16-4b92-aaf4-fb65f022c500",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[2744, 81, 280, 7, 72, "Input",ExpressionUUID->"f10bb080-b665-4294-8b90-69998620f980"],
+Cell[3027, 90, 1471, 46, 36, "Output",ExpressionUUID->"2c242654-1e1e-40ce-867e-887bb8604702"]
+}, Open  ]],
+Cell[4513, 139, 215, 6, 34, "Text",ExpressionUUID->"7be243b4-8608-424d-b1a2-cd0df8bccc04",
+ Evaluatable->False],
+Cell[4731, 147, 264, 7, 72, "Input",ExpressionUUID->"e104c65f-efb2-4ba8-ae5a-fb17737dce95"],
+Cell[4998, 156, 191, 5, 34, "Text",ExpressionUUID->"94429c73-f96b-45ce-b077-20b7c7ceb772",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[5214, 165, 117, 2, 27, "Input",ExpressionUUID->"a3061cb4-0e23-4260-a0d9-c929d8496c04"],
+Cell[5334, 169, 916, 31, 37, "Output",ExpressionUUID->"3a5e60e0-24fb-499a-91dc-05dd0de09749",
+ Evaluatable->False]
+}, Open  ]],
+Cell[6265, 203, 225, 6, 56, "Text",ExpressionUUID->"c03b1464-7cb4-4b7d-8148-4a2ddc936805",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[6515, 213, 157, 2, 27, "Input",ExpressionUUID->"1df0b13d-3ad2-4e78-afca-70553d5438ad"],
+Cell[6675, 217, 176, 4, 31, "Output",ExpressionUUID->"5b0582d4-fcb3-4f4c-9df0-8817e051172a",
+ Evaluatable->False]
+}, Open  ]],
+Cell[6866, 224, 564, 11, 100, "Text",ExpressionUUID->"f6e1328c-22f9-487b-98c5-94bbf1be5aaa",
+ Evaluatable->False],
+Cell[7433, 237, 801, 18, 237, "Input",ExpressionUUID->"dd8650b7-edb2-471f-b040-d9fb889fb54e"],
+Cell[8237, 257, 201, 5, 34, "Text",ExpressionUUID->"1b12cf57-286b-41a3-a8da-8dc5879b489b",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[8463, 266, 176, 4, 27, "Input",ExpressionUUID->"c641be14-f3bb-4dad-9077-8918902c6c28"],
+Cell[8642, 272, 1145, 30, 50, "Output",ExpressionUUID->"9fd0b463-26c5-403c-b608-e75ad9796fe3",
+ Evaluatable->False]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9824, 307, 144, 2, 27, "Input",ExpressionUUID->"974679fd-c576-470e-a4b9-5b921f9589f6"],
+Cell[9971, 311, 1147, 31, 106, "Output",ExpressionUUID->"4338b4f2-529f-4bf0-90fe-1364f1bb9d32",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

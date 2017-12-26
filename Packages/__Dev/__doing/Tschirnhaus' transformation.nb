@@ -1,0 +1,955 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     33295,        947]
+NotebookOptionsPosition[     25436,        785]
+NotebookOutlinePosition[     26318,        813]
+CellTagsIndexPosition[     26275,        810]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\:5951\:6069\:8c6a\:65af\:53d8\:6362 Tschirnhaus' transformation", \
+"Subsection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.723236417360426*^9, 3.7232364232542667`*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"eaf2d80e-ea8d-4868-8698-b0827f01a978"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["CC"], "Input",
+ CellChangeTimes->{
+  3.723236808828627*^9},ExpressionUUID->"2b9b6be8-ae46-4488-8788-\
+26bade63d263"],
+
+Cell[BoxData[
+ RowBox[{
+  TagBox["\<\"\:6240\:6709\:4e34\:65f6\:5b9a\:4e49\:5df2\:6e05\:7a7a!\"\>",
+   "EchoLabel"], " ", "\<\"\"\>"}]], "Echo",
+ CellChangeTimes->{
+  3.723236809184864*^9},ExpressionUUID->"d4fa3adc-7ad6-4d12-85b3-\
+928e12076255"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculating power sums with Newton's relations", "Subsubsection",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"1890eb89-8414-4413-a804-c2908b8130ed"],
+
+Cell["\<\
+We first need to implement a function for the sum s(n) of the n-th powers of \
+all of the roots of a quintic equation a0 x^5 + a1 x^4 + a2 x^3 + a3 x^2 + a4 \
+x + a5 = 0. In general Newton's relations are given recursively by s(n) = - \
+(a1 s(n-1) + a2 s(n-2) + ... + an-1 s(1) + an n)/a0.
+We implement this in the function:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"117dfeca-b13f-4636-bb14-13552cc522ed"],
+
+Cell["\<\
+Psi[q_, x_, n_Integer] := Psi[q, x, n] =
+-(n Coefficient[q, x, 5-n] + 
+     Sum[Psi[q, x, n-j] Coefficient[q, x, 5-j],
+         {j, n-1}]) / Coefficient[q, x, 5]\
+\>", "Input",
+ CellChangeTimes->{3.7232366691395345`*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"dbf7347e-6fac-4be5-a0a0-0e34aabaecf4"],
+
+Cell["\<\
+It is interesting that it is not necessary to solve the quintic to find the \
+roots explicitly; the coefficients of the quintic have all the information we \
+need.
+Let us give an example. Here is a quintic equation: \
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"59d7aae0-4818-43ee-8d65-7b3013e0b137"],
+
+Cell[CellGroupData[{
+
+Cell["r = (2. - 2.x + 4.x^2 + x^3 + x^4 - 7x^5 == 0)", "Input",
+ CellChangeTimes->{{3.723236718141882*^9, 3.72323671833117*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"e36a315f-454c-4d87-8712-1020a1a015da"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+   RowBox[{"2.`", " ", "x"}], "+", 
+   RowBox[{"4.`", " ", 
+    SuperscriptBox["x", "2"]}], "+", 
+   SuperscriptBox["x", "3"], "+", 
+   SuperscriptBox["x", "4"], "-", 
+   RowBox[{"7", " ", 
+    SuperscriptBox["x", "5"]}]}], "\[Equal]", "0"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.7232045314827757`*^9, 3.7232366849927683`*^9, 
+  3.723236719729714*^9, 3.723236812991819*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"9dfd8567-69cf-4d37-ba64-e053d1f2fefa"]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Here we calculate the first ten power sums with ",
+  Evaluatable->False,
+  AspectRatioFixed->True],
+ StyleBox["Psi",
+  Evaluatable->False,
+  AspectRatioFixed->True,
+  FontFamily->"Courier",
+  FontWeight->"Bold"],
+ StyleBox[":",
+  Evaluatable->False,
+  AspectRatioFixed->True]
+}], "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"6c865b86-ab4b-41e1-b167-9712c2c741a1"],
+
+Cell[CellGroupData[{
+
+Cell["Table[Psi[r[[1]], x, i], {i, 10}]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"f9bf92d6-8317-4d26-b3d3-319898adab72"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "1"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "2"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "3"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "4"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "5"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "6"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "7"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "8"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "9"}], "]"}], ",", 
+   RowBox[{"Psi", "[", 
+    RowBox[{
+     RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+      RowBox[{"2.`", " ", "x"}], "+", 
+      RowBox[{"4.`", " ", 
+       SuperscriptBox["x", "2"]}], "+", 
+      SuperscriptBox["x", "3"], "+", 
+      SuperscriptBox["x", "4"], "-", 
+      RowBox[{"7", " ", 
+       SuperscriptBox["x", "5"]}]}], ",", "x", ",", "10"}], "]"}]}], 
+  "}"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{{3.723204534347652*^9, 3.723204539916643*^9}, {
+   3.723236687701697*^9, 3.7232367219815235`*^9}, 3.7232368143510838`*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"d3fa2b90-ac92-4b93-a118-935920882732"]
+}, Open  ]],
+
+Cell["\<\
+For comparison, we find the roots numerically and calculate the same power \
+sums by brute force:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"f07747da-ce4e-4d2c-a7a1-6f7d111527d4"],
+
+Cell[CellGroupData[{
+
+Cell["roots = x /. NSolve[r, x]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"acef5c50-10f0-421e-a386-6824400ffe3b"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "0.6392335616120377`"}], "-", 
+    RowBox[{"0.6901279689150049`", " ", "\[ImaginaryI]"}]}], ",", 
+   RowBox[{
+    RowBox[{"-", "0.6392335616120377`"}], "+", 
+    RowBox[{"0.6901279689150049`", " ", "\[ImaginaryI]"}]}], ",", 
+   RowBox[{"0.23669936601926927`", "\[VeryThinSpace]", "-", 
+    RowBox[{"0.5334694998232218`", " ", "\[ImaginaryI]"}]}], ",", 
+   RowBox[{"0.23669936601926927`", "\[VeryThinSpace]", "+", 
+    RowBox[{"0.5334694998232218`", " ", "\[ImaginaryI]"}]}], ",", 
+   "0.9479255340426795`"}], "}"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{
+  3.7232045427934017`*^9, {3.7232367032226353`*^9, 3.7232367243551273`*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"72c2999f-dbf2-4cdb-9c03-065ee65b27c4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Table[Plus @@ (roots^i), {i, 10}] // Chop", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"27b12a94-5ae8-4d8d-89cc-f12b0d34b43f"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "0.1428571428571428`", ",", "0.30612244897959195`", ",", 
+   "1.7784256559766756`", ",", 
+   RowBox[{"-", "0.7634319033735943`"}], ",", "1.7076813232581665`", ",", 
+   "1.1044887759351958`", ",", 
+   RowBox[{"-", "0.45516627547074007`"}], ",", "1.794823273171094`", ",", 
+   "0.11648366402537352`", ",", "0.18528956142277858`"}], "}"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{
+  3.7232045450030937`*^9, {3.7232367083985357`*^9, 3.7232367260911884`*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"4f020282-013e-42f5-bded-d287a9d33415"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\:4e3b\:53d8\:6362 Principal Transform ", "Subsubsection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.7232364620397224`*^9, 3.723236474521334*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"ee040fc6-43bf-4e3b-8155-73628d973d7c"],
+
+Cell["\<\
+We will show how to transform a quintic a0 x^5 + a1 x^4 + a2 x^3 + a3 x^2+ a4 \
+x + a5 = 0 to one of the form y^5 + b3 y^2 + b4 y + b5 = 0. Newton's \
+relations for the yj in terms of the bj is a linear system in the bj; solving \
+for the bj expresses them in terms of the power sums 
+s(n, yj). We will show that these power sums can be expressed in terms of the \
+aj, so that the bj will be expressed in terms of the aj.
+For a quintic to have no quartic or cubic term it is necessary that the sums \
+of the roots and the sums of the squares of the roots vanish: s(1, yj) = 0, \
+s(2, yj) = 0 (*). 
+Assume that the roots yj of the new quintic are related to the roots xj of \
+the original quintic by yj = xj^2 + alpha xj + beta. Substituting this into \
+(*) yields two equations for alpha and beta which can be multiplied out, \
+simplified by using Newton's relations for the power sums in the xj, and \
+finally solved, so that alpha and beta can be expressed using radicals in \
+terms of the coefficients aj. 
+Again by substitution into (*), we can calculate  s(3, yj), s(4, yj), s(5, \
+yj) in terms of alpha and beta and the xj; by the previous solution for alpha \
+and beta and again by using Newton's relations for the power sums in the xj \
+we can ultimately express these power sums in terms of the aj. 
+We implement this in the following definition. The result is a list with two \
+elements; the first element is the transformation of the roots as a pure \
+function and the second element is the new quintic.\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"7aeffb1a-c945-442b-a64b-55eccea7c619"],
+
+Cell["\<\
+PrincipalTransform[p_ == 0, x_, y_]:=
+Module[{alpha, beta, xi},
+{alpha, beta} = {alpha, beta} /. Last[Solve[
+  {5 (xi^2+ alpha xi + beta) == 0, 
+   Expand[5 (xi^2 + alpha xi + beta)^2] == 0} /.
+                xi^n_.->1/5 Psi[p, x, n],{alpha, beta}]];
+  {
+   Evaluate[#^2 + alpha # + beta]&, 
+   (y^5 - Sum[y^(5-j)/j Collect[(xi^2 + alpha xi + beta)^j + 
+   \t\t4 beta^j, xi] /.
+    \t\txi^n_. -> Psi[p, x, n], {j, 3, 5}]) == 0
+   }
+   ] /; MatchQ[CoefficientList[p, x],
+   \t\t{_, _, _, _, _?(# =!= 0 &), _}]\
+\>", "Input",
+ CellChangeTimes->{3.723236621897825*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"b848b11d-9222-4e9c-bf1c-0ed14990c0a0"],
+
+Cell["\<\
+As an example we use the same equation r as above. The principal quintic of r \
+is:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"d145349d-bbda-4d55-825b-3efb6909b479"],
+
+Cell[CellGroupData[{
+
+Cell["p = PrincipalTransform[r, x, y]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"52e8e6d2-73af-4340-8691-800dd3922660"],
+
+Cell[BoxData[
+ RowBox[{"PrincipalTransform", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"2.`", "\[VeryThinSpace]", "-", 
+     RowBox[{"2.`", " ", "x"}], "+", 
+     RowBox[{"4.`", " ", 
+      SuperscriptBox["x", "2"]}], "+", 
+     SuperscriptBox["x", "3"], "+", 
+     SuperscriptBox["x", "4"], "-", 
+     RowBox[{"7", " ", 
+      SuperscriptBox["x", "5"]}]}], "\[Equal]", "0"}], ",", "x", ",", "y"}], 
+  "]"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{{3.723236789910179*^9, 3.7232367958149824`*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"c744ba33-43e8-418f-a3ad-8dea7993da19"]
+}, Open  ]],
+
+Cell["\<\
+Applying the pure function (the first element of this result) to the roots xi \
+of the old equation gives the roots of the transformed equation yi:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"b8cf36b0-6ea8-4193-8d6f-b769fec5c8ee"],
+
+Cell[CellGroupData[{
+
+Cell["(First[p] /@ roots) // Sort", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"779badc9-c2b4-411f-bf3c-c6824fba768d"],
+
+Cell[OutputFormData["\<\
+{-0.3682654317302792 - 0.1777723982552981*I, 
+ 
+  -0.3682654317302792 + 0.1777723982552981*I, 
+ 
+  -0.158671424029763 - 0.827355983447415*I, 
+ 
+  -0.158671424029763 + 0.827355983447415*I, 
+ 
+  1.053873711520084}\
+\>", "\<\
+{-0.368265 - 0.177772 I, -0.368265 + 0.177772 I, 
+ 
+  -0.158671 - 0.827356 I, -0.158671 + 0.827356 I, 1.05387}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"df878448-7746-4577-955c-0e576d7c6b92"]
+}, Open  ]],
+
+Cell["Solving numerically gives us a check:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"8348fa9f-14a8-458a-8b4e-34d5c0118795"],
+
+Cell[CellGroupData[{
+
+Cell["NSolve[Last[p], y]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"18cc421c-1103-4c56-b023-9c3c0312da9d"],
+
+Cell[OutputFormData["\<\
+{{y -> -0.3682654317302791 - 0.1777723982552981*I}, 
+ 
+  {y -> -0.3682654317302791 + 0.1777723982552981*I}, 
+ 
+  {y -> -0.1586714240297631 - 0.827355983447416*I}, 
+ 
+  {y -> -0.1586714240297631 + 0.827355983447416*I}, 
+ 
+  {y -> 1.053873711520084}}\
+\>", "\<\
+{{y -> -0.368265 - 0.177772 I}, 
+ 
+  {y -> -0.368265 + 0.177772 I}, 
+ 
+  {y -> -0.158671 - 0.827356 I}, 
+ 
+  {y -> -0.158671 + 0.827356 I}, {y -> 1.05387}}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"a5ce26ec-371c-4403-ace5-b9df53a65981"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\:5e03\:6797\:6770\:62c9\:5fb7\:53d8\:6362 Bring-Jerrard Transform ", \
+"Subsubsection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.723236481897726*^9, 3.723236495452114*^9}, 
+   3.7232365794370403`*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"f2a9cc4c-4ea1-4485-9c31-1d4c9f380239"],
+
+Cell["\<\
+We can also use a Tschirnhaus transformation to take a quintic y^5 + b3 y^2 + \
+b4 y + b5 = 0 to one of the form z^5 + c4 z + c5 = 0. Now the sum of the \
+third powers of the roots has to vanish as well: s(3, yj) = 0.
+We assume that the roots zi of the new Bring-Jerrard quintic are related to \
+the roots yi of the principal quintic by zi = alpha yi^4 + beta yi^3 + gamma \
+yi^2 + delta yi  + epsilon. In a similar way to the previous reduction we can \
+express the coefficients cj in terms of the bj. 
+This is implemented in the following definition. The result is a list with \
+two elements; the first element is the transformation of the roots as a pure \
+function and the second element is the new quintic.\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"ca95d819-557b-4670-9779-36dce182f41c"],
+
+Cell["\<\
+BringJerrardTransform[p_ == 0, y_, z_] :=
+Module[{alpha, beta, gamma, delta, epsilon, kappa, lambda,
+        mu, nu, psi, xi, zeta, a, b, c, g, h},
+psi[t_] := Expand[5t]/.xi^n_. -> Psi[p, y, n]/5;
+{a, b, c} = Map[Psi[p, y, #]&, {3, 4, 5}];
+g=5a xi^3 - 5 b xi^2 - a^2; h = 5 a xi^4 - 5 c xi^2 - a b;
+{lambda, mu, nu} = Map[psi, {g^2, 2 g h, h^2}];
+kappa = -mu/(2 lambda) + Sqrt[mu^2/(4 lambda^2) - nu/lambda];
+delta = Solve[psi[(zeta xi+ kappa g + h)^3] == 0, 
+     zeta][[1, 1, 2]];
+alpha = 5a; beta = 5a kappa; gamma = -5b kappa-5 c; 
+epsilon = -a^2 kappa- a b;
+ {
+ Evaluate[alpha #^4 + beta #^3 + 
+     gamma #^2 + delta # + epsilon]&,
+ z^5 - Sum[z^(5-j)/j Collect[psi[(delta xi + 
+     kappa g + h)^j],xi],{j,4,5}] == 0
+  }
+ ]/; MatchQ[CoefficientList[p, y],{_, _, _, 0, 0, _}]\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"49e61e6c-56a8-411d-9aa3-9ed8d83a8952"],
+
+Cell["We continue our example:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"8c30f4d3-af89-4d22-84ce-2c7a9447feec"],
+
+Cell[CellGroupData[{
+
+Cell["b = BringJerrardTransform[p[[2]], y, z]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"6118578e-bba9-40b8-aa31-369f6c1ef722"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Part","partd",
+   "\"\:90e8\:5206\:6307\:5b9a \\!\\(\\*RowBox[{\\\"p\\\", \\\"\
+\[LeftDoubleBracket]\\\", \\\"2\\\", \\\"\[RightDoubleBracket]\\\"}]\\) \
+\:6bd4\:5bf9\:8c61\:6df1\:5ea6\:66f4\:957f.\"",2,271,61,32046041381532139200,
+   "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.723236785968073*^9},ExpressionUUID->"998055ce-4603-4ded-a3f6-\
+a3752de0fc1e"],
+
+Cell[BoxData[
+ RowBox[{"BringJerrardTransform", "[", 
+  RowBox[{
+   RowBox[{"p", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], ",", 
+   "y", ",", "z"}], "]"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.723236785970075*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"d2a08239-f378-4568-9835-289a593f5646"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\:89c4\:8303\:53d8\:6362 Canonical Transform ", "Subsubsection",
+ Evaluatable->False,
+ CellChangeTimes->{{3.723236553989904*^9, 3.7232365835557337`*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"6e7ead5a-d335-49c5-9d0e-9d6677469ac5"],
+
+Cell["\<\
+A Bring-Jerrard quintic has the form z^5 + c4 z + c5 = 0. It is possible to \
+write such a quintic by a simple rescaling in the form t^5 - t - r = 0, a \
+canonical quintic. (It is not possible to transform a sextic to another that \
+depends on only one parameter.)  \
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"ce19fa7a-13aa-4fb3-9bb9-b9a744066531"],
+
+Cell["\<\
+CanonicalTransform[z_^5 + e_. z_ + f_ == 0, z_, t_] := {#/(-e)^(1/4)&, t^5 - \
+t + f/(-e)^(5/4) == 0}\
+\>", "Input",
+ CellChangeTimes->{{3.7232365934191446`*^9, 3.723236596924678*^9}},
+ AspectRatioFixed->
+  True,ExpressionUUID->"98576551-d74e-445f-bb3c-490c7b30d1ff"],
+
+Cell["Here is our example reduced to a canonical quintic:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"d26fab54-99a7-40f6-9bc4-6c61b9d4b038"],
+
+Cell[CellGroupData[{
+
+Cell["c = CanonicalTransform[b[[2]], z, t]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"239ff32a-7e62-4e24-ab30-e9a47a5afc84"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Part","partd",
+   "\"\:90e8\:5206\:6307\:5b9a \\!\\(\\*RowBox[{\\\"b\\\", \\\"\
+\[LeftDoubleBracket]\\\", \\\"2\\\", \\\"\[RightDoubleBracket]\\\"}]\\) \
+\:6bd4\:5bf9\:8c61\:6df1\:5ea6\:66f4\:957f.\"",2,260,60,32046041381532139200,
+   "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.7232366019055014`*^9},ExpressionUUID->"fd5ab2df-3d8b-42db-a8f7-\
+db7b04f852d7"],
+
+Cell[BoxData[
+ RowBox[{"CanonicalTransform", "[", 
+  RowBox[{
+   RowBox[{"b", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], ",", 
+   "z", ",", "t"}], "]"}]], "Output",
+ Evaluatable->False,
+ CellChangeTimes->{3.723236601907503*^9},
+ AspectRatioFixed->
+  True,ExpressionUUID->"51a7caf9-434e-4bb0-9e04-ac2264a14a51"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Transforming back", "Subsubsection",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"655f1fe6-eb2c-4c75-be4c-e267211baad7"],
+
+Cell["\<\
+After having solved a canonical quintic via Hermite's method or with \
+hypergeometric functions, or a principal quintic via Klein's approach, it is \
+necessary to reverse the Tschirnhaus transformations to get back to the roots \
+of the original quintic. Since these polynomial transformations are nonlinear \
+inverting them will give mutiple roots; the spurious ones can be  eliminated \
+by seeing which one satisfies the original equation. The following function \
+implements this. The original polynomial is p and s is the list of candidate \
+solutions.\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"0d731431-3473-4ff3-8b78-5ac3bd4eebf0"],
+
+Cell["\<\
+ChooseRoot[p_, s_] := 
+         s[[Position[#, Min[#]][[1, 1]]&[Abs[p /. s]]]]\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"51230a25-a3a0-4727-8260-2fb00e9741ff"],
+
+Cell["These are the solutions of t^5 -t + 3.24201 = 0:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"fa7b6117-d9c9-44ca-8bc5-247c986ba5f8"],
+
+Cell["\<\
+tau = {-1.356724, 
+     -0.317423 - 1.26515 I, 
+     -0.317425 + 1.26515 I, 
+      0.9957874 - 0.64192 I, 
+      0.9957874 + 0.64192 I};\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"00f4c22f-e673-489c-9186-65bb759849ee"],
+
+Cell["These are the solutions of the Bring-Jerrard quintic:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"20809e86-4cd0-45a2-8001-392758dc1d7b"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+zeta = 
+     Table[Solve[First[c][z] == tau[[i]], z][[1, 1, 2]],
+          {i, 5}]\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"75412995-30f6-406b-a71c-81da2e96f217"],
+
+Cell[OutputFormData["\<\
+{-1.568127942320668, -0.3668836667113233 - 
+ 
+   1.462284935054582*I, -0.3668859783501567 + 
+ 
+   1.462284935054582*I, 1.150950411838257 - 
+ 
+   0.7419435999764751*I, 
+ 
+  1.150950411838257 + 0.7419435999764751*I}\
+\>", "\<\
+{-1.56813, -0.366884 - 1.46228 I, -0.366886 + 1.46228 I, 
+ 
+  1.15095 - 0.741944 I, 1.15095 + 0.741944 I}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"8d660dbc-40e9-4941-931f-3a8ad54854d5"]
+}, Open  ]],
+
+Cell["These are the solutions of the principal quintic:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"9836ad52-6d4e-41e8-bd0d-f100aa43f79f"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+eta = Table[ChooseRoot[p[[2, 1]],
+          Solve[First[b][y] == zeta[[i]], y] ][[1, 2]],
+              {i, 5}]\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"94623e59-fe55-4922-99ac-fa7449b2eb15"],
+
+Cell[OutputFormData["\<\
+{1.053873724882538, -0.3682651702984545 + 
+ 
+   0.1777709639429517*I, 
+ 
+  -0.3682649028302858 - 0.1777710816675959*I, 
+ 
+  -0.1586718791391074 + 0.827356255681592*I, 
+ 
+  -0.1586718791391074 - 0.827356255681592*I}\
+\>", "\<\
+{1.05387, -0.368265 + 0.177771 I, -0.368265 - 0.177771 I, 
+ 
+  -0.158672 + 0.827356 I, -0.158672 - 0.827356 I}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"9b47dac5-24df-4e2a-94a6-891a9f61cd4b"]
+}, Open  ]],
+
+Cell["Finally, these are the solutions of the original quintic:", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"d080eaee-93df-4cdd-8dbd-2474286325e4"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Sort[Table[ChooseRoot[r[[1]],
+          Solve[First[p][x] == eta[[i]], x] ][[1, 2]],
+              {i, 5}]]\
+\>", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"24cb8383-3045-40ec-8864-039461b67e30"],
+
+Cell[OutputFormData["\<\
+{-0.5271098971477955 - 0.6505023854878369*I, 
+ 
+  -0.5271098971477955 + 0.6505023854878369*I, 
+ 
+  0.2835309547890224 + 0.508776206870753*I, 
+ 
+  0.2835311390196337 - 0.5087760072777432*I, 
+ 
+  1.201441376898397}\
+\>", "\<\
+{-0.52711 - 0.650502 I, -0.52711 + 0.650502 I, 
+ 
+  0.283531 + 0.508776 I, 0.283531 - 0.508776 I, 1.20144}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"8304d303-92a3-45d4-94d0-818a02decd4e"]
+}, Open  ]],
+
+Cell["\<\
+This checks with the direct numerical solution of the original quintic:\
+\>", "Text",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"e54115a8-d7df-4d3d-96bc-e2179163c6c1"],
+
+Cell[CellGroupData[{
+
+Cell["x /. NSolve[r, x]", "Input",
+ AspectRatioFixed->
+  True,ExpressionUUID->"89919d33-c42b-4fe8-a52f-7a5c7183d4f3"],
+
+Cell[OutputFormData["\<\
+{-0.5271099650163091 - 0.6505021020228447*I, 
+ 
+  -0.5271099650163091 + 0.6505021020228447*I, 
+ 
+  0.283532136767416 - 0.5087768696637565*I, 
+ 
+  0.283532136767416 + 0.5087768696637565*I, 1.2014413707835}\
+\>", "\<\
+{-0.52711 - 0.650502 I, -0.52711 + 0.650502 I, 
+ 
+  0.283532 - 0.508777 I, 0.283532 + 0.508777 I, 1.20144}\
+\>"], "Output",
+ Evaluatable->False,
+ AspectRatioFixed->
+  True,ExpressionUUID->"c61a17d2-8dcd-44a9-a254-71171223bda8"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowToolbars->{},
+CellGrouping->Manual,
+WindowSize->{1026, 846},
+WindowMargins->{{20, Automatic}, {15, Automatic}},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+ShowCellLabel->True,
+ShowCellTags->False,
+FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (2017\:5e7410\:67082\
+\:65e5)",
+StyleDefinitions->"Default.nb",
+PrivateNotebookOptions -> {"ColorPalette" -> {RGBColor, -1}},
+RenderingOptions -> {"ObjectDithering" -> True},
+RenderingOptions -> {"RasterDithering" -> False},
+MacintoshSystemPageSetup -> \
+"AVU/IFiQKFD000000V:^/09R]g0000000OVaH097bCP0AP1Y06`0I@1^0642HZj`\n\
+0V:gT0000001nK500TO9>000000000000000009R[[0000000000000000000000\n\
+00000000000000000000000000000000"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 260, 5, 53, "Subsection",ExpressionUUID->"eaf2d80e-ea8d-4868-8698-b0827f01a978",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[865, 31, 130, 3, 27, "Input",ExpressionUUID->"2b9b6be8-ae46-4488-8788-26bade63d263"],
+Cell[998, 36, 246, 6, 22, "Echo",ExpressionUUID->"d4fa3adc-7ad6-4d12-85b3-928e12076255"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1281, 47, 175, 3, 44, "Subsubsection",ExpressionUUID->"1890eb89-8414-4413-a804-c2908b8130ed",
+ Evaluatable->False],
+Cell[1459, 52, 452, 9, 78, "Text",ExpressionUUID->"117dfeca-b13f-4636-bb14-13552cc522ed",
+ Evaluatable->False],
+Cell[1914, 63, 313, 8, 72, "Input",ExpressionUUID->"dbf7347e-6fac-4be5-a0a0-0e34aabaecf4"],
+Cell[2230, 73, 344, 8, 78, "Text",ExpressionUUID->"59d7aae0-4818-43ee-8d65-7b3013e0b137",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[2599, 85, 211, 3, 27, "Input",ExpressionUUID->"e36a315f-454c-4d87-8712-1020a1a015da"],
+Cell[2813, 90, 539, 14, 33, "Output",ExpressionUUID->"9dfd8567-69cf-4d37-ba64-e053d1f2fefa",
+ Evaluatable->False]
+}, Open  ]],
+Cell[3367, 107, 418, 15, 35, "Text",ExpressionUUID->"6c865b86-ab4b-41e1-b167-9712c2c741a1",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[3810, 126, 133, 2, 27, "Input",ExpressionUUID->"f9bf92d6-8317-4d26-b3d3-319898adab72"],
+Cell[3946, 130, 3933, 108, 112, "Output",ExpressionUUID->"d3fa2b90-ac92-4b93-a118-935920882732",
+ Evaluatable->False]
+}, Open  ]],
+Cell[7894, 241, 225, 6, 34, "Text",ExpressionUUID->"f07747da-ce4e-4d2c-a7a1-6f7d111527d4",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[8144, 251, 125, 2, 27, "Input",ExpressionUUID->"acef5c50-10f0-421e-a386-6824400ffe3b"],
+Cell[8272, 255, 796, 18, 31, "Output",ExpressionUUID->"72c2999f-dbf2-4cdb-9c03-065ee65b27c4",
+ Evaluatable->False]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9105, 278, 141, 2, 27, "Input",ExpressionUUID->"27b12a94-5ae8-4d8d-89cc-f12b0d34b43f"],
+Cell[9249, 282, 590, 13, 31, "Output",ExpressionUUID->"4f020282-013e-42f5-bded-d287a9d33415",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9888, 301, 236, 4, 44, "Subsubsection",ExpressionUUID->"ee040fc6-43bf-4e3b-8155-73628d973d7c",
+ Evaluatable->False],
+Cell[10127, 307, 1642, 26, 276, "Text",ExpressionUUID->"7aeffb1a-c945-442b-a64b-55eccea7c619",
+ Evaluatable->False],
+Cell[11772, 335, 659, 18, 222, "Input",ExpressionUUID->"b848b11d-9222-4e9c-bf1c-0ed14990c0a0"],
+Cell[12434, 355, 211, 6, 34, "Text",ExpressionUUID->"d145349d-bbda-4d55-825b-3efb6909b479",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[12670, 365, 131, 2, 27, "Input",ExpressionUUID->"52e8e6d2-73af-4340-8691-800dd3922660"],
+Cell[12804, 369, 590, 16, 68, "Output",ExpressionUUID->"c744ba33-43e8-418f-a3ad-8dea7993da19",
+ Evaluatable->False]
+}, Open  ]],
+Cell[13409, 388, 275, 6, 34, "Text",ExpressionUUID->"b8cf36b0-6ea8-4193-8d6f-b769fec5c8ee",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[13709, 398, 127, 2, 27, "Input",ExpressionUUID->"779badc9-c2b4-411f-bf3c-c6824fba768d"],
+Cell[13839, 402, 479, 17, 55, "Output",ExpressionUUID->"df878448-7746-4577-955c-0e576d7c6b92",
+ Evaluatable->False]
+}, Open  ]],
+Cell[14333, 422, 157, 3, 34, "Text",ExpressionUUID->"8348fa9f-14a8-458a-8b4e-34d5c0118795",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[14515, 429, 118, 2, 27, "Input",ExpressionUUID->"18cc421c-1103-4c56-b023-9c3c0312da9d"],
+Cell[14636, 433, 561, 21, 92, "Output",ExpressionUUID->"a5ce26ec-371c-4403-ace5-b9df53a65981",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15246, 460, 292, 6, 44, "Subsubsection",ExpressionUUID->"f2a9cc4c-4ea1-4485-9c31-1d4c9f380239",
+ Evaluatable->False],
+Cell[15541, 468, 839, 14, 144, "Text",ExpressionUUID->"ca95d819-557b-4670-9779-36dce182f41c",
+ Evaluatable->False],
+Cell[16383, 484, 888, 22, 297, "Input",ExpressionUUID->"49e61e6c-56a8-411d-9aa3-9ed8d83a8952"],
+Cell[17274, 508, 144, 3, 34, "Text",ExpressionUUID->"8c30f4d3-af89-4d22-84ce-2c7a9447feec",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[17443, 515, 139, 2, 27, "Input",ExpressionUUID->"6118578e-bba9-40b8-aa31-369f6c1ef722"],
+Cell[17585, 519, 419, 10, 24, "Message",ExpressionUUID->"998055ce-4603-4ded-a3f6-a3752de0fc1e"],
+Cell[18007, 531, 326, 8, 31, "Output",ExpressionUUID->"d2a08239-f378-4568-9835-289a593f5646",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18382, 545, 242, 4, 44, "Subsubsection",ExpressionUUID->"6e7ead5a-d335-49c5-9d0e-9d6677469ac5",
+ Evaluatable->False],
+Cell[18627, 551, 394, 8, 56, "Text",ExpressionUUID->"ce19fa7a-13aa-4fb3-9bb9-b9a744066531",
+ Evaluatable->False],
+Cell[19024, 561, 277, 6, 27, "Input",ExpressionUUID->"98576551-d74e-445f-bb3c-490c7b30d1ff"],
+Cell[19304, 569, 171, 3, 34, "Text",ExpressionUUID->"d26fab54-99a7-40f6-9bc4-6c61b9d4b038",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[19500, 576, 136, 2, 27, "Input",ExpressionUUID->"239ff32a-7e62-4e24-ab30-e9a47a5afc84"],
+Cell[19639, 580, 421, 10, 24, "Message",ExpressionUUID->"fd5ab2df-3d8b-42db-a8f7-db7b04f852d7"],
+Cell[20063, 592, 323, 8, 31, "Output",ExpressionUUID->"51a7caf9-434e-4bb0-9e04-ac2264a14a51",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20435, 606, 146, 3, 44, "Subsubsection",ExpressionUUID->"655f1fe6-eb2c-4c75-be4c-e267211baad7",
+ Evaluatable->False],
+Cell[20584, 611, 684, 12, 100, "Text",ExpressionUUID->"0d731431-3473-4ff3-8b78-5ac3bd4eebf0",
+ Evaluatable->False],
+Cell[21271, 625, 186, 5, 42, "Input",ExpressionUUID->"51230a25-a3a0-4727-8260-2fb00e9741ff"],
+Cell[21460, 632, 168, 3, 34, "Text",ExpressionUUID->"fa7b6117-d9c9-44ca-8bc5-247c986ba5f8",
+ Evaluatable->False],
+Cell[21631, 637, 244, 8, 87, "Input",ExpressionUUID->"00f4c22f-e673-489c-9186-65bb759849ee"],
+Cell[21878, 647, 173, 3, 34, "Text",ExpressionUUID->"20809e86-4cd0-45a2-8001-392758dc1d7b",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[22076, 654, 190, 6, 57, "Input",ExpressionUUID->"75412995-30f6-406b-a71c-81da2e96f217"],
+Cell[22269, 662, 476, 17, 55, "Output",ExpressionUUID->"8d660dbc-40e9-4941-931f-3a8ad54854d5",
+ Evaluatable->False]
+}, Open  ]],
+Cell[22760, 682, 169, 3, 34, "Text",ExpressionUUID->"9836ad52-6d4e-41e8-bd0d-f100aa43f79f",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[22954, 689, 219, 6, 57, "Input",ExpressionUUID->"94623e59-fe55-4922-99ac-fa7449b2eb15"],
+Cell[23176, 697, 482, 17, 55, "Output",ExpressionUUID->"9b47dac5-24df-4e2a-94a6-891a9f61cd4b",
+ Evaluatable->False]
+}, Open  ]],
+Cell[23673, 717, 177, 3, 34, "Text",ExpressionUUID->"d080eaee-93df-4cdd-8dbd-2474286325e4",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[23875, 724, 215, 6, 57, "Input",ExpressionUUID->"24cb8383-3045-40ec-8864-039461b67e30"],
+Cell[24093, 732, 476, 17, 55, "Output",ExpressionUUID->"8304d303-92a3-45d4-94d0-818a02decd4e",
+ Evaluatable->False]
+}, Open  ]],
+Cell[24584, 752, 199, 5, 34, "Text",ExpressionUUID->"e54115a8-d7df-4d3d-96bc-e2179163c6c1",
+ Evaluatable->False],
+Cell[CellGroupData[{
+Cell[24808, 761, 117, 2, 27, "Input",ExpressionUUID->"89919d33-c42b-4fe8-a52f-7a5c7183d4f3"],
+Cell[24928, 765, 468, 15, 55, "Output",ExpressionUUID->"c61a17d2-8dcd-44a9-a254-71171223bda8",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
