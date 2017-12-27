@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     67185,       1825]
-NotebookOptionsPosition[     62774,       1742]
-NotebookOutlinePosition[     63656,       1770]
-CellTagsIndexPosition[     63613,       1767]
+NotebookDataLength[     42841,       1174]
+NotebookOptionsPosition[     38552,       1092]
+NotebookOutlinePosition[     39435,       1120]
+CellTagsIndexPosition[     39392,       1117]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -41,7 +41,8 @@ Cell["a0 x^5 + a1 x^4 + a2 x^3 + a3 x^2 + a4 x + a5 = 0", "Text",
 Cell["has been reduced to the canonical form ", "Text",
  Evaluatable->False,
  AspectRatioFixed->
-  True,ExpressionUUID->"32fef6be-3cb7-497a-a2c7-5dec4d428813"],
+  True,ExpressionUUID->"32fef6be-3cb7-497a-a2c7-5dec4d428813"]
+}, Open  ]],
 
 Cell["t^5 - t + rho = 0 ", "Text",
  Evaluatable->False,
@@ -56,656 +57,6 @@ is a full solution:\
  Evaluatable->False,
  AspectRatioFixed->
   True,ExpressionUUID->"9075da61-daa9-4d58-a15c-8f3e9f12a73c"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"HermiteQuinticSolve", "[", 
-   RowBox[{"rho_", ",", "t_"}], "]"}], " ", ":=", "\n", "  ", 
-  RowBox[{"Module", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"k", ",", " ", "b", ",", " ", "q"}], "}"}], ",", " ", "\n", 
-    "   ", 
-    RowBox[{
-     RowBox[{"k", " ", "=", " ", 
-      RowBox[{"Tan", "[", 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"1", "/", "4"}], ")"}], "*", 
-        RowBox[{"ArcSin", "[", 
-         RowBox[{"16", "/", 
-          RowBox[{"(", 
-           RowBox[{"25", "*", 
-            RowBox[{"Sqrt", "[", "5", "]"}], "*", 
-            RowBox[{"rho", "^", "2"}]}], ")"}]}], "]"}]}], "]"}]}], ";", " ", 
-     "\n", "    ", 
-     RowBox[{"b", " ", "=", " ", 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"(", 
-           RowBox[{"k", "^", "2"}], ")"}], "^", 
-          RowBox[{"(", 
-           RowBox[{"1", "/", "8"}], ")"}]}], "*", 
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"Re", "[", "rho", "]"}], " ", "==", " ", "0"}], ",", " ", 
-           
-           RowBox[{"-", 
-            RowBox[{"Sign", "[", 
-             RowBox[{"Im", "[", "rho", "]"}], "]"}]}], ",", " ", "\n", 
-           "        ", 
-           RowBox[{"Sign", "[", 
-            RowBox[{"Re", "[", "rho", "]"}], "]"}]}], "]"}]}], ")"}], "/", 
-       RowBox[{"(", 
-        RowBox[{"2", "*", 
-         RowBox[{"5", "^", 
-          RowBox[{"(", 
-           RowBox[{"3", "/", "4"}], ")"}]}], "*", 
-         RowBox[{"Sqrt", "[", "k", "]"}], "*", 
-         RowBox[{"Sqrt", "[", 
-          RowBox[{"1", " ", "-", " ", 
-           RowBox[{"k", "^", "2"}]}], "]"}]}], ")"}]}]}], ";", " ", "\n", 
-     "    ", 
-     RowBox[{"q", " ", "=", " ", 
-      RowBox[{"EllipticNomeQ", "[", 
-       RowBox[{"k", "^", "2"}], "]"}]}], ";", " ", 
-     RowBox[{
-      RowBox[{"(", 
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"t", " ", "->", " ", "#1"}], "}"}], " ", "&"}], " ", ")"}], 
-      " ", "/@", " ", "\n", "     ", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"b", "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{"-", "1"}], ")"}], "^", 
-            RowBox[{"(", 
-             RowBox[{"3", "/", "4"}], ")"}]}], "*", 
-           RowBox[{"(", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"InverseEllipticNomeQ", "[", 
-               RowBox[{
-                RowBox[{"q", "^", 
-                 RowBox[{"(", 
-                  RowBox[{"1", "/", "5"}], ")"}]}], "/", "\n", "            ", 
-                RowBox[{"E", "^", 
-                 RowBox[{"(", 
-                  RowBox[{
-                   RowBox[{"(", 
-                    RowBox[{"1", "/", "5"}], ")"}], "*", 
-                   RowBox[{"(", 
-                    RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-               "]"}], "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "8"}], ")"}]}], " ", "+", " ", "\n", 
-             "         ", 
-             RowBox[{"I", "*", 
-              RowBox[{
-               RowBox[{"InverseEllipticNomeQ", "[", 
-                RowBox[{
-                 RowBox[{"E", "^", 
-                  RowBox[{"(", 
-                   RowBox[{
-                    RowBox[{"(", 
-                    RowBox[{"1", "/", "5"}], ")"}], "*", 
-                    RowBox[{"(", 
-                    RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-                 RowBox[{"q", "^", 
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", "\n", 
-               "           ", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", 
-           RowBox[{"(", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"InverseEllipticNomeQ", "[", 
-               RowBox[{
-                RowBox[{"q", "^", 
-                 RowBox[{"(", 
-                  RowBox[{"1", "/", "5"}], ")"}]}], "/", "\n", "            ", 
-                RowBox[{"E", "^", 
-                 RowBox[{"(", 
-                  RowBox[{
-                   RowBox[{"(", 
-                    RowBox[{"1", "/", "5"}], ")"}], "*", 
-                   RowBox[{"(", 
-                    RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-               "]"}], "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "8"}], ")"}]}], " ", "+", " ", "\n", 
-             "         ", 
-             RowBox[{
-              RowBox[{"InverseEllipticNomeQ", "[", 
-               RowBox[{
-                RowBox[{"E", "^", 
-                 RowBox[{"(", 
-                  RowBox[{
-                   RowBox[{"(", 
-                    RowBox[{"1", "/", "5"}], ")"}], "*", 
-                   RowBox[{"(", 
-                    RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-                RowBox[{"q", "^", 
-                 RowBox[{"(", 
-                  RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", "\n", 
-              "          ", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "*", 
-           RowBox[{"(", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"(", 
-               RowBox[{
-                RowBox[{"q", "^", 
-                 RowBox[{"(", 
-                  RowBox[{"5", "/", "8"}], ")"}]}], "*", 
-                RowBox[{
-                 RowBox[{"InverseEllipticNomeQ", "[", 
-                  RowBox[{"q", "^", "5"}], "]"}], "^", 
-                 RowBox[{"(", 
-                  RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "/", "\n", 
-              "          ", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"q", "^", "5"}], ")"}], "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "+", " ", 
-             RowBox[{
-              RowBox[{"InverseEllipticNomeQ", "[", 
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "]"}], "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}]}], ")"}]}], ",", " ",
-         "\n", "      ", 
-        RowBox[{"b", "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", "\n", "           ", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "-", " ", "\n", 
-           "        ", 
-           RowBox[{
-            RowBox[{"InverseEllipticNomeQ", "[", 
-             RowBox[{"q", "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "5"}], ")"}]}], "]"}], "^", 
-            RowBox[{"(", 
-             RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "*", "\n", "       ", 
-         
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}], "/", "\n", "         ", 
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], " ", 
-           "+", " ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", "\n", "           ", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", "\n", 
-         "       ", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", "\n", "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "+", " ", 
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"q", "^", 
-               RowBox[{"(", 
-                RowBox[{"5", "/", "8"}], ")"}]}], "*", 
-              RowBox[{
-               RowBox[{"InverseEllipticNomeQ", "[", 
-                RowBox[{"q", "^", "5"}], "]"}], "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "/", "\n", 
-            "         ", 
-            RowBox[{
-             RowBox[{"(", 
-              RowBox[{"q", "^", "5"}], ")"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}]}], ",", " ", "\n", 
-        "      ", 
-        RowBox[{"b", "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", "\n", "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}], "/", 
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], " ", 
-           "-", " ", "\n", "        ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", "\n", "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{"-", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{"q", "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "5"}], ")"}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "-", " ", "\n", 
-           "        ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", "\n", 
-             "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"q", "^", 
-               RowBox[{"(", 
-                RowBox[{"5", "/", "8"}], ")"}]}], "*", 
-              RowBox[{
-               RowBox[{"InverseEllipticNomeQ", "[", 
-                RowBox[{"q", "^", "5"}], "]"}], "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "/", "\n", 
-            "         ", 
-            RowBox[{
-             RowBox[{"(", 
-              RowBox[{"q", "^", "5"}], ")"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "+", " ", 
-           RowBox[{
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-            "\n", "         ", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", "\n", 
-             "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}]}], ",", " ", 
-        RowBox[{"b", "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"InverseEllipticNomeQ", "[", 
-             RowBox[{"q", "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "5"}], ")"}]}], "]"}], "^", 
-            RowBox[{"(", 
-             RowBox[{"1", "/", "8"}], ")"}]}], " ", "-", " ", "\n", 
-           "        ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", "\n", "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{"-", 
-              RowBox[{"E", "^", 
-               RowBox[{"(", 
-                RowBox[{
-                 RowBox[{"(", 
-                  RowBox[{"1", "/", "4"}], ")"}], "*", 
-                 RowBox[{"(", 
-                  RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-             ")"}], "*", "\n", "         ", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", "\n", 
-             "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "-", " ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               "\n", "            ", 
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}], "*", "\n", 
-         "       ", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}], "/", "\n", "         ", 
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], " ", 
-           "+", " ", "\n", "        ", 
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"q", "^", 
-               RowBox[{"(", 
-                RowBox[{"5", "/", "8"}], ")"}]}], "*", 
-              RowBox[{
-               RowBox[{"InverseEllipticNomeQ", "[", 
-                RowBox[{"q", "^", "5"}], "]"}], "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}]}], ")"}], "/", "\n", 
-            "         ", 
-            RowBox[{
-             RowBox[{"(", 
-              RowBox[{"q", "^", "5"}], ")"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}]}], ",", " ", 
-        RowBox[{"b", "*", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"InverseEllipticNomeQ", "[", 
-             RowBox[{"q", "^", 
-              RowBox[{"(", 
-               RowBox[{"1", "/", "5"}], ")"}]}], "]"}], "^", "\n", 
-            "         ", 
-            RowBox[{"(", 
-             RowBox[{"1", "/", "8"}], ")"}]}], " ", "-", " ", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", "\n", "            ", 
-               
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}], "/", 
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}]}], 
-          ")"}], "*", "\n", "       ", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}], "/", 
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}], 
-              "]"}], "^", "\n", "          ", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "-", " ", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"2", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               "\n", "            ", 
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}], "*", 
-            RowBox[{"E", "^", 
-             RowBox[{"(", 
-              RowBox[{
-               RowBox[{"(", 
-                RowBox[{"1", "/", "4"}], ")"}], "*", 
-               RowBox[{"(", 
-                RowBox[{"3", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}]}]}], 
-          ")"}], "*", "\n", "       ", 
-         RowBox[{"(", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"InverseEllipticNomeQ", "[", 
-                RowBox[{"q", "^", "5"}], "]"}], "^", 
-               RowBox[{"(", 
-                RowBox[{"1", "/", "8"}], ")"}]}], "*", 
-              RowBox[{"q", "^", 
-               RowBox[{"(", 
-                RowBox[{"5", "/", "8"}], ")"}]}]}], ")"}], "/", "\n", 
-            "         ", 
-            RowBox[{
-             RowBox[{"(", 
-              RowBox[{"q", "^", "5"}], ")"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}], " ", "-", " ", 
-           RowBox[{"I", "*", 
-            RowBox[{
-             RowBox[{"InverseEllipticNomeQ", "[", "\n", "           ", 
-              RowBox[{
-               RowBox[{"E", "^", 
-                RowBox[{"(", 
-                 RowBox[{
-                  RowBox[{"(", 
-                   RowBox[{"1", "/", "5"}], ")"}], "*", 
-                  RowBox[{"(", 
-                   RowBox[{"4", "*", "I"}], ")"}], "*", "Pi"}], ")"}]}], "*", 
-               
-               RowBox[{"q", "^", 
-                RowBox[{"(", 
-                 RowBox[{"1", "/", "5"}], ")"}]}]}], "]"}], "^", 
-             RowBox[{"(", 
-              RowBox[{"1", "/", "8"}], ")"}]}]}]}], ")"}]}]}], "}"}]}]}]}], 
-   "]"}]}]], "Input",
- CellChangeTimes->{{3.7232064436049485`*^9, 3.7232064470594263`*^9}, {
-  3.7232065162421827`*^9, 3.723206521088679*^9}, {3.7232390576982617`*^9, 
-  3.7232390797033873`*^9}},
- AspectRatioFixed->
-  True,ExpressionUUID->"46a9e89a-38a2-46af-8e71-ca3e17cf09f0"],
 
 Cell["\<\
 The elliptic modular function InverseEllipticNomeQ function is a solution of \
@@ -1738,12 +1089,11 @@ Cell[BoxData[
  AspectRatioFixed->
   True,ExpressionUUID->"9e1615b7-e5dd-4477-abb2-5de29a1eaa23"]
 }, Open  ]]
-}, Open  ]]
 },
 WindowToolbars->{},
 CellGrouping->Manual,
 WindowSize->{1542, 854},
-WindowMargins->{{36, Automatic}, {15, Automatic}},
+WindowMargins->{{170, Automatic}, {50, Automatic}},
 PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
 ShowCellLabel->True,
 ShowCellTags->False,
@@ -1777,55 +1127,54 @@ Cell[738, 27, 210, 6, 34, "Text",ExpressionUUID->"387d41a1-3a97-437f-80bf-311a2c
 Cell[951, 35, 169, 3, 34, "Text",ExpressionUUID->"d3f5fc54-0bcd-4a8a-aef5-860af1248564",
  Evaluatable->False],
 Cell[1123, 40, 159, 3, 34, "Text",ExpressionUUID->"32fef6be-3cb7-497a-a2c7-5dec4d428813",
- Evaluatable->False],
-Cell[1285, 45, 138, 3, 34, "Text",ExpressionUUID->"b52be5ab-cdb1-4a50-9ca3-f150c9381088",
- Evaluatable->False],
-Cell[1426, 50, 304, 7, 34, "Text",ExpressionUUID->"9075da61-daa9-4d58-a15c-8f3e9f12a73c",
- Evaluatable->False],
-Cell[1733, 59, 24219, 648, 892, "Input",ExpressionUUID->"46a9e89a-38a2-46af-8e71-ca3e17cf09f0"],
-Cell[25955, 709, 381, 8, 56, "Text",ExpressionUUID->"55029c2d-8b8e-4c24-890c-6d6f3fec1601",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[26361, 721, 835, 24, 91, "Input",ExpressionUUID->"073d0064-8ec1-4078-ad28-ca389b4ea2c5"],
-Cell[27199, 747, 248, 5, 31, "Output",ExpressionUUID->"7dbdf18b-2d5f-4fd1-91a2-28e19c1c6c57"],
-Cell[27450, 754, 424, 11, 56, "Output",ExpressionUUID->"654d24d5-f108-47c5-be37-554216d136be"],
-Cell[27877, 767, 1180, 27, 31, "Output",ExpressionUUID->"5afb138b-42b3-453b-b2ec-c390e37f6c6a"]
+ Evaluatable->False]
 }, Open  ]],
-Cell[29072, 797, 266, 6, 28, "Input",ExpressionUUID->"1d582d97-e24c-4a93-b87f-e45185ef5499"],
+Cell[1297, 46, 138, 3, 34, "Text",ExpressionUUID->"b52be5ab-cdb1-4a50-9ca3-f150c9381088",
+ Evaluatable->False],
+Cell[1438, 51, 304, 7, 34, "Text",ExpressionUUID->"9075da61-daa9-4d58-a15c-8f3e9f12a73c",
+ Evaluatable->False],
+Cell[1745, 60, 381, 8, 56, "Text",ExpressionUUID->"55029c2d-8b8e-4c24-890c-6d6f3fec1601",
+ Evaluatable->False],
 Cell[CellGroupData[{
-Cell[29363, 807, 442, 14, 50, "Input",ExpressionUUID->"234c70e7-53ef-40cc-b0b4-6674426d7f5f"],
-Cell[29808, 823, 443, 14, 54, "Output",ExpressionUUID->"224f2d48-0947-4173-b34a-a849152f597e"],
+Cell[2151, 72, 835, 24, 91, "Input",ExpressionUUID->"073d0064-8ec1-4078-ad28-ca389b4ea2c5"],
+Cell[2989, 98, 248, 5, 31, "Output",ExpressionUUID->"7dbdf18b-2d5f-4fd1-91a2-28e19c1c6c57"],
+Cell[3240, 105, 424, 11, 56, "Output",ExpressionUUID->"654d24d5-f108-47c5-be37-554216d136be"],
+Cell[3667, 118, 1180, 27, 31, "Output",ExpressionUUID->"5afb138b-42b3-453b-b2ec-c390e37f6c6a"]
+}, Open  ]],
+Cell[4862, 148, 266, 6, 28, "Input",ExpressionUUID->"1d582d97-e24c-4a93-b87f-e45185ef5499"],
 Cell[CellGroupData[{
-Cell[30276, 841, 741, 20, 71, "Input",ExpressionUUID->"cb47a51b-6c34-4ace-903e-394f08b0f0b1"],
-Cell[31020, 863, 230, 6, 22, "Echo",ExpressionUUID->"6aab4873-031d-45eb-8ce2-f5a6ce1e61a8"],
-Cell[31253, 871, 210, 6, 22, "Echo",ExpressionUUID->"c09fb5f7-76ce-4ca7-9798-822c7c80f3fa"],
-Cell[31466, 879, 1801, 56, 81, "Output",ExpressionUUID->"918cbe02-7345-4476-9136-dbb30b64f03a"],
-Cell[33270, 937, 1402, 38, 58, "Output",ExpressionUUID->"72652f81-ce44-4370-8bec-a770fbf82058"]
+Cell[5153, 158, 442, 14, 50, "Input",ExpressionUUID->"234c70e7-53ef-40cc-b0b4-6674426d7f5f"],
+Cell[5598, 174, 443, 14, 54, "Output",ExpressionUUID->"224f2d48-0947-4173-b34a-a849152f597e"],
+Cell[CellGroupData[{
+Cell[6066, 192, 741, 20, 71, "Input",ExpressionUUID->"cb47a51b-6c34-4ace-903e-394f08b0f0b1"],
+Cell[6810, 214, 230, 6, 22, "Echo",ExpressionUUID->"6aab4873-031d-45eb-8ce2-f5a6ce1e61a8"],
+Cell[7043, 222, 210, 6, 22, "Echo",ExpressionUUID->"c09fb5f7-76ce-4ca7-9798-822c7c80f3fa"],
+Cell[7256, 230, 1801, 56, 81, "Output",ExpressionUUID->"918cbe02-7345-4476-9136-dbb30b64f03a"],
+Cell[9060, 288, 1402, 38, 58, "Output",ExpressionUUID->"72652f81-ce44-4370-8bec-a770fbf82058"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[34721, 981, 1110, 27, 71, "Input",ExpressionUUID->"231dfaa8-6ade-439d-9688-c1d80d7d07bd"],
-Cell[35834, 1010, 228, 6, 22, "Echo",ExpressionUUID->"a403c288-914d-46c3-96e6-03cd74086ad0"],
-Cell[36065, 1018, 212, 6, 22, "Echo",ExpressionUUID->"c57013a4-b756-4f53-9ee2-6bd59a6a420f"],
-Cell[36280, 1026, 1167, 35, 77, "Output",ExpressionUUID->"6d41fa45-8a53-49ed-9403-348028f7ac04"],
-Cell[37450, 1063, 506, 13, 58, "Output",ExpressionUUID->"39999ca1-f054-4caa-ae2b-f50a8332edbd"],
-Cell[37959, 1078, 831, 16, 73, "Message",ExpressionUUID->"1ca55f87-6d53-49f6-97fa-86fd041a24c1"],
-Cell[38793, 1096, 308, 6, 31, "Output",ExpressionUUID->"fae6c36a-e3a6-4af7-8069-0dc1ef75b895"]
+Cell[10511, 332, 1110, 27, 71, "Input",ExpressionUUID->"231dfaa8-6ade-439d-9688-c1d80d7d07bd"],
+Cell[11624, 361, 228, 6, 22, "Echo",ExpressionUUID->"a403c288-914d-46c3-96e6-03cd74086ad0"],
+Cell[11855, 369, 212, 6, 22, "Echo",ExpressionUUID->"c57013a4-b756-4f53-9ee2-6bd59a6a420f"],
+Cell[12070, 377, 1167, 35, 77, "Output",ExpressionUUID->"6d41fa45-8a53-49ed-9403-348028f7ac04"],
+Cell[13240, 414, 506, 13, 58, "Output",ExpressionUUID->"39999ca1-f054-4caa-ae2b-f50a8332edbd"],
+Cell[13749, 429, 831, 16, 74, "Message",ExpressionUUID->"1ca55f87-6d53-49f6-97fa-86fd041a24c1"],
+Cell[14583, 447, 308, 6, 31, "Output",ExpressionUUID->"fae6c36a-e3a6-4af7-8069-0dc1ef75b895"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[39138, 1107, 1620, 34, 64, "Input",ExpressionUUID->"ad13d77c-9d5c-43af-a981-c0a746cf8dd6"],
-Cell[40761, 1143, 228, 6, 22, "Echo",ExpressionUUID->"3f8d3d9c-3369-4eba-b994-6f218024bca5"],
-Cell[40992, 1151, 212, 6, 22, "Echo",ExpressionUUID->"8e1adf01-9823-4054-8002-10757ef13e03"],
-Cell[41207, 1159, 18547, 501, 425, "Output",ExpressionUUID->"1fa7bb7c-482e-4792-a495-02840790a61c",
+Cell[14928, 458, 1620, 34, 64, "Input",ExpressionUUID->"ad13d77c-9d5c-43af-a981-c0a746cf8dd6"],
+Cell[16551, 494, 228, 6, 22, "Echo",ExpressionUUID->"3f8d3d9c-3369-4eba-b994-6f218024bca5"],
+Cell[16782, 502, 212, 6, 22, "Echo",ExpressionUUID->"8e1adf01-9823-4054-8002-10757ef13e03"],
+Cell[16997, 510, 18547, 501, 369, "Output",ExpressionUUID->"1fa7bb7c-482e-4792-a495-02840790a61c",
  Evaluatable->False]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[59791, 1665, 417, 8, 42, "Input",ExpressionUUID->"8d5aa05a-146d-4b83-a210-5eedb2bef1e6"],
-Cell[60211, 1675, 1261, 30, 31, "Output",ExpressionUUID->"0ccfc43b-7964-4d89-a66e-95c6bbf92ff3",
+Cell[35581, 1016, 417, 8, 42, "Input",ExpressionUUID->"8d5aa05a-146d-4b83-a210-5eedb2bef1e6"],
+Cell[36001, 1026, 1261, 30, 31, "Output",ExpressionUUID->"0ccfc43b-7964-4d89-a66e-95c6bbf92ff3",
  Evaluatable->False],
-Cell[61475, 1707, 1271, 31, 31, "Output",ExpressionUUID->"9e1615b7-e5dd-4477-abb2-5de29a1eaa23",
+Cell[37265, 1058, 1271, 31, 31, "Output",ExpressionUUID->"9e1615b7-e5dd-4477-abb2-5de29a1eaa23",
  Evaluatable->False]
-}, Open  ]]
 }, Open  ]]
 }
 ]
