@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     14500,        419]
-NotebookOptionsPosition[     11146,        346]
-NotebookOutlinePosition[     12026,        374]
-CellTagsIndexPosition[     11983,        371]
+NotebookDataLength[     13378,        381]
+NotebookOptionsPosition[     10412,        317]
+NotebookOutlinePosition[     11292,        345]
+CellTagsIndexPosition[     11249,        342]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -132,9 +132,9 @@ Cell[BoxData[
     RowBox[{"1", "+", 
      RowBox[{"V", " ", "Z"}]}], "\[Equal]", 
     RowBox[{"1728", " ", "Z"}]}]}], "}"}]], "Output",
- CellChangeTimes->{
-  3.7232065522598314`*^9},ExpressionUUID->"2c242654-1e1e-40ce-867e-\
-887bb8604702"]
+ CellChangeTimes->{3.7232065522598314`*^9, 
+  3.723354405348461*^9},ExpressionUUID->"66d08cb3-0b0c-49af-bc0b-\
+fee059171e87"]
 }, Open  ]],
 
 Cell["\<\
@@ -196,30 +196,9 @@ Cell[BoxData[
          SuperscriptBox["z", "25"]}], ")"}]}]}], ")"}], "2"], " ", 
    "Z"}]}]], "Output",
  Evaluatable->False,
- CellChangeTimes->{3.72320655804116*^9},
+ CellChangeTimes->{3.72320655804116*^9, 3.7233544053990088`*^9},
  AspectRatioFixed->
-  True,ExpressionUUID->"3a5e60e0-24fb-499a-91dc-05dd0de09749"]
-}, Open  ]],
-
-Cell["\<\
-However, it is more appropriate to keep u and v for numerical reasons.
-Here is a numerical check:\
-\>", "Text",
- Evaluatable->False,
- AspectRatioFixed->
-  True,ExpressionUUID->"c03b1464-7cb4-4b7d-8148-4a2ddc936805"],
-
-Cell[CellGroupData[{
-
-Cell["lhsIcoEq[ N[u[2.-0.7I]], N[v[2.-0.7I]], 2.-0.7I ] // Chop", "Input",
- AspectRatioFixed->
-  True,ExpressionUUID->"1df0b13d-3ad2-4e78-afca-70553d5438ad"],
-
-Cell[BoxData["0"], "Output",
- Evaluatable->False,
- CellChangeTimes->{3.7232065614993095`*^9},
- AspectRatioFixed->
-  True,ExpressionUUID->"5b0582d4-fcb3-4f4c-9df0-8817e051172a"]
+  True,ExpressionUUID->"f3db89e4-0fbe-48e9-be0c-7aaf5844ee8d"]
 }, Open  ]],
 
 Cell["\<\
@@ -262,50 +241,46 @@ Here is a numerical example for solving a quintic using Klein's approach:\
  AspectRatioFixed->
   True,ExpressionUUID->"1b12cf57-286b-41a3-a8da-8dc5879b489b"],
 
-Cell[CellGroupData[{
-
-Cell["\<\
-KleinSolve[y^5 + 5.I y^2 -12. y + 1.- I == 0, y] //N // Chop // Sort\
-\>", "Input",
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"y", "/.", 
+     RowBox[{"KleinSolve", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         SuperscriptBox["y", "5"], "+", " ", 
+         SuperscriptBox["y", "2"], "-", 
+         RowBox[{"3", " ", "y"}], "+", "1"}], "\[Equal]", "0"}], ",", "y"}], 
+      "]"}]}], "//", "Flatten"}], ",", 
+   RowBox[{"TimeConstraint", "\[Rule]", "0.01"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.723354412805783*^9, 3.723354522086144*^9}, 
+   3.723354552282868*^9, 3.723354846834225*^9},
  AspectRatioFixed->
   True,ExpressionUUID->"c641be14-f3bb-4dad-9077-8918902c6c28"],
 
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "1.9045622974614882`"}], "-", 
-      RowBox[{"0.3331347633715126`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "0.043053072143816706`"}], "-", 
-      RowBox[{"1.4308318411583978`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "0.012003051009727594`"}], "+", 
-      RowBox[{"2.2009410800734504`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"y", "\[Rule]", 
-     RowBox[{"0.0895118029858113`", "\[VeryThinSpace]", "-", 
-      RowBox[{"0.0828539140488862`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"y", "\[Rule]", 
-     RowBox[{"1.8701066176292205`", "\[VeryThinSpace]", "-", 
-      RowBox[{"0.35412056149465276`", " ", "\[ImaginaryI]"}]}]}], "}"}]}], 
-  "}"}]], "Output",
+Cell[BoxData["$Aborted"], "Output",
  Evaluatable->False,
- CellChangeTimes->{3.7232065660018473`*^9},
+ CellChangeTimes->{
+  3.7232065660018473`*^9, {3.723354405485556*^9, 3.72335448370301*^9}, {
+   3.7233545161861315`*^9, 3.72335453490277*^9}, 3.723354604714408*^9},
  AspectRatioFixed->
-  True,ExpressionUUID->"9fd0b463-26c5-403c-b608-e75ad9796fe3"]
-}, Open  ]],
+  True,ExpressionUUID->"91643397-3b1e-4aef-921a-119085920dff"],
 
 Cell[CellGroupData[{
 
-Cell["NSolve[y^5 + 5.I y^2 -12. y + 1.- I == 0, y]", "Input",
+Cell[BoxData[
+ RowBox[{"NSolve", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["y", "5"], "+", 
+     RowBox[{"5", " ", 
+      SuperscriptBox["y", "2"]}], "-", 
+     RowBox[{"3", " ", "y"}], "+", "1"}], "\[Equal]", "0"}], ",", "y"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.723354625627796*^9, 3.7233546299891815`*^9}},
  AspectRatioFixed->
   True,ExpressionUUID->"974679fd-c576-470e-a4b9-5b921f9589f6"],
 
@@ -314,33 +289,29 @@ Cell[BoxData[
   RowBox[{
    RowBox[{"{", 
     RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "1.9045622974614862`"}], "-", 
-      RowBox[{"0.3331347633715131`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+     RowBox[{"-", "1.8997452734449365`"}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "0.043053072143816325`"}], "-", 
-      RowBox[{"1.430831841158396`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+     RowBox[{"0.3045490037400078`", "\[VeryThinSpace]", "-", 
+      RowBox[{"0.3286267671989321`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{"y", "\[Rule]", 
-     RowBox[{
-      RowBox[{"-", "0.012003051009727086`"}], "+", 
-      RowBox[{"2.2009410800734495`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
+     RowBox[{"0.3045490037400078`", "\[VeryThinSpace]", "+", 
+      RowBox[{"0.3286267671989321`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{"y", "\[Rule]", 
-     RowBox[{"0.08951180298581089`", "\[VeryThinSpace]", "-", 
-      RowBox[{"0.08285391404888665`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
-   
+     RowBox[{"0.6453236329824606`", "\[VeryThinSpace]", "-", 
+      RowBox[{"1.4851643635750489`", " ", "\[ImaginaryI]"}]}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{"y", "\[Rule]", 
-     RowBox[{"1.8701066176292191`", "\[VeryThinSpace]", "-", 
-      RowBox[{"0.3541205614946533`", " ", "\[ImaginaryI]"}]}]}], "}"}]}], 
+     RowBox[{"0.6453236329824606`", "\[VeryThinSpace]", "+", 
+      RowBox[{"1.4851643635750489`", " ", "\[ImaginaryI]"}]}]}], "}"}]}], 
   "}"}]], "Output",
  Evaluatable->False,
- CellChangeTimes->{3.723206568524263*^9},
+ CellChangeTimes->{3.723206568524263*^9, 3.7233544055090733`*^9, 
+  3.7233546315210505`*^9},
  AspectRatioFixed->
-  True,ExpressionUUID->"4338b4f2-529f-4bf0-90fe-1364f1bb9d32"]
+  True,ExpressionUUID->"64bf4ee5-484d-4a8c-b35f-60a08faea4ac"]
 }, Open  ]]
 }, Open  ]]
 },
@@ -386,38 +357,29 @@ Cell[2450, 71, 269, 6, 56, "Text",ExpressionUUID->"27d4e49e-da16-4b92-aaf4-fb65f
  Evaluatable->False],
 Cell[CellGroupData[{
 Cell[2744, 81, 280, 7, 72, "Input",ExpressionUUID->"f10bb080-b665-4294-8b90-69998620f980"],
-Cell[3027, 90, 1471, 46, 36, "Output",ExpressionUUID->"2c242654-1e1e-40ce-867e-887bb8604702"]
+Cell[3027, 90, 1493, 46, 36, "Output",ExpressionUUID->"66d08cb3-0b0c-49af-bc0b-fee059171e87"]
 }, Open  ]],
-Cell[4513, 139, 215, 6, 34, "Text",ExpressionUUID->"7be243b4-8608-424d-b1a2-cd0df8bccc04",
+Cell[4535, 139, 215, 6, 34, "Text",ExpressionUUID->"7be243b4-8608-424d-b1a2-cd0df8bccc04",
  Evaluatable->False],
-Cell[4731, 147, 264, 7, 72, "Input",ExpressionUUID->"e104c65f-efb2-4ba8-ae5a-fb17737dce95"],
-Cell[4998, 156, 191, 5, 34, "Text",ExpressionUUID->"94429c73-f96b-45ce-b077-20b7c7ceb772",
+Cell[4753, 147, 264, 7, 72, "Input",ExpressionUUID->"e104c65f-efb2-4ba8-ae5a-fb17737dce95"],
+Cell[5020, 156, 191, 5, 34, "Text",ExpressionUUID->"94429c73-f96b-45ce-b077-20b7c7ceb772",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[5214, 165, 117, 2, 27, "Input",ExpressionUUID->"a3061cb4-0e23-4260-a0d9-c929d8496c04"],
-Cell[5334, 169, 916, 31, 37, "Output",ExpressionUUID->"3a5e60e0-24fb-499a-91dc-05dd0de09749",
+Cell[5236, 165, 117, 2, 27, "Input",ExpressionUUID->"a3061cb4-0e23-4260-a0d9-c929d8496c04"],
+Cell[5356, 169, 940, 31, 37, "Output",ExpressionUUID->"f3db89e4-0fbe-48e9-be0c-7aaf5844ee8d",
  Evaluatable->False]
 }, Open  ]],
-Cell[6265, 203, 225, 6, 56, "Text",ExpressionUUID->"c03b1464-7cb4-4b7d-8148-4a2ddc936805",
+Cell[6311, 203, 564, 11, 100, "Text",ExpressionUUID->"f6e1328c-22f9-487b-98c5-94bbf1be5aaa",
+ Evaluatable->False],
+Cell[6878, 216, 801, 18, 237, "Input",ExpressionUUID->"dd8650b7-edb2-471f-b040-d9fb889fb54e"],
+Cell[7682, 236, 201, 5, 34, "Text",ExpressionUUID->"1b12cf57-286b-41a3-a8da-8dc5879b489b",
+ Evaluatable->False],
+Cell[7886, 243, 643, 17, 32, "Input",ExpressionUUID->"c641be14-f3bb-4dad-9077-8918902c6c28"],
+Cell[8532, 262, 304, 6, 31, "Output",ExpressionUUID->"91643397-3b1e-4aef-921a-119085920dff",
  Evaluatable->False],
 Cell[CellGroupData[{
-Cell[6515, 213, 157, 2, 27, "Input",ExpressionUUID->"1df0b13d-3ad2-4e78-afca-70553d5438ad"],
-Cell[6675, 217, 176, 4, 31, "Output",ExpressionUUID->"5b0582d4-fcb3-4f4c-9df0-8817e051172a",
- Evaluatable->False]
-}, Open  ]],
-Cell[6866, 224, 564, 11, 100, "Text",ExpressionUUID->"f6e1328c-22f9-487b-98c5-94bbf1be5aaa",
- Evaluatable->False],
-Cell[7433, 237, 801, 18, 237, "Input",ExpressionUUID->"dd8650b7-edb2-471f-b040-d9fb889fb54e"],
-Cell[8237, 257, 201, 5, 34, "Text",ExpressionUUID->"1b12cf57-286b-41a3-a8da-8dc5879b489b",
- Evaluatable->False],
-Cell[CellGroupData[{
-Cell[8463, 266, 176, 4, 27, "Input",ExpressionUUID->"c641be14-f3bb-4dad-9077-8918902c6c28"],
-Cell[8642, 272, 1145, 30, 50, "Output",ExpressionUUID->"9fd0b463-26c5-403c-b608-e75ad9796fe3",
- Evaluatable->False]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[9824, 307, 144, 2, 27, "Input",ExpressionUUID->"974679fd-c576-470e-a4b9-5b921f9589f6"],
-Cell[9971, 311, 1147, 31, 106, "Output",ExpressionUUID->"4338b4f2-529f-4bf0-90fe-1364f1bb9d32",
+Cell[8861, 272, 419, 12, 32, "Input",ExpressionUUID->"974679fd-c576-470e-a4b9-5b921f9589f6"],
+Cell[9283, 286, 1101, 27, 31, "Output",ExpressionUUID->"64bf4ee5-484d-4a8c-b35f-60a08faea4ac",
  Evaluatable->False]
 }, Open  ]]
 }, Open  ]]
