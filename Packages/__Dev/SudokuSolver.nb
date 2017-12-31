@@ -1,0 +1,2885 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    116983,       2875]
+NotebookOptionsPosition[     98905,       2634]
+NotebookOutlinePosition[     99280,       2651]
+CellTagsIndexPosition[     99237,       2648]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[{
+ "Solving ",
+ "Sudoku",
+ " Problems in ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"]
+}], "Title",ExpressionUUID->"6a594214-caef-4fc0-b132-ed293e82b886"],
+
+Cell["\<\
+Jon McLoone
+Wolfram Research\
+\>", "Subtitle",ExpressionUUID->"1b1eb284-d6d0-48aa-9152-ead84b009d3f"],
+
+Cell["June 2005", "Subsubtitle",ExpressionUUID->"89c46bb5-3698-4229-bc61-3c0a41749a86"],
+
+Cell[CellGroupData[{
+
+Cell["Summary", "Section",
+ ShowGroupOpener->True,ExpressionUUID->"e0dcd2f4-0b45-4160-920d-9a124481615b"],
+
+Cell[TextData[{
+ "Sudoku is a popular number puzzle.  Its rules are easily stated: \nA 9\
+\[Times]9 grid is presented, containing some pre-defined numbers. The players \
+task is to fill in the grid so that every row, every column, and every 3x3 \
+box contains the digits 1 through 9. \n\nFor example\n\n",
+ Cell[BoxData[GridBox[{
+    {" ", " ", "8", "1", "7", "6", " ", "2", " "},
+    {" ", "4", " ", " ", " ", "9", "7", " ", " "},
+    {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+    {" ", "7", "1", "8", " ", " ", " ", " ", " "},
+    {" ", " ", " ", " ", " ", " ", "6", "7", "9"},
+    {" ", " ", " ", "5", "9", "7", " ", "8", "1"},
+    {" ", " ", " ", " ", "2", " ", " ", " ", " "},
+    {" ", "5", "9", " ", " ", " ", " ", "1", " "},
+    {" ", "1", "4", "6", "5", " ", "3", " ", " "}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True]],ExpressionUUID->"e4caa06d-1944-47d4-94e2-f08717a0aba4"],
+ "\n\nhas a solution\n\n",
+ Cell[BoxData[GridBox[{
+    {"5", "3", "8", "1", "7", "6", "9", "2", "4"},
+    {"1", "4", "2", "3", "8", "9", "7", "5", "6"},
+    {"7", "9", "6", "2", "4", "5", "1", "3", "8"},
+    {"9", "7", "1", "8", "6", "2", "5", "4", "3"},
+    {"8", "2", "5", "4", "1", "3", "6", "7", "9"},
+    {"4", "6", "3", "5", "9", "7", "2", "8", "1"},
+    {"3", "8", "7", "9", "2", "1", "4", "6", "5"},
+    {"6", "5", "9", "7", "3", "4", "8", "1", "2"},
+    {"2", "1", "4", "6", "5", "8", "3", "9", "7"}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True]],ExpressionUUID->"b6d7f035-fc76-4322-887e-0d1b8b466469"],
+ "\n\nEasy and moderate Sudoku puzzles can typically be solved with just two \
+rules:\nIf a value is known for a particular square, then it can be \
+eliminated as a possible value for each of the other squares in the \
+dimension.\nIf only one square in a dimension has a particular number as a \
+possibility, then it is known to be that squares value.\n\nThese two rules \
+must be applied repeatedly in each of three dimensions: rows, columns and 3\
+\[Times]3 sub-grids until nothing changes.\n\nIn under specified problems, or \
+problems where these rules are insufficient, you can also do a systematic \
+search. Pick the first value out of the remaining possible and solve from \
+there. If a contradiction is reached, go back and try the next possible \
+value. The existing logic is applied wherever possible to limit the size of \
+search required. This search must be recursively applied as the problem may \
+still be underspecified after a guess, whether or not that guess is correct.\n\
+\nThis notebook presents a short program for applying those rules using the \
+following template: "
+}], "Text",ExpressionUUID->"9c73226a-1075-4f30-b557-365c29a2b738"],
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "InputOnly",ExpressionUUID->"e4a638d0-7a78-4ce8-9c95-c8493271f941"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Solution", "Section",
+ ShowGroupOpener->True,ExpressionUUID->"13d2a1ec-bfb8-4664-bf5b-745ffcd9cb12"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Off", "[", 
+   RowBox[{"General", "::", "\"\<spell\>\""}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"<<", "Statistics`"}]}], "InputOnly",ExpressionUUID->"fc143c99-7e87-\
+4fb2-82e0-d5ca9fd2afb0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"LineSimplify", "[", "data_List", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"known", ",", "d2"}], "}"}], ",", "\[IndentingNewLine]", 
+     "\t\t\t", 
+     RowBox[{
+      RowBox[{"known", "=", 
+       RowBox[{"Cases", "[", 
+        RowBox[{"data", ",", 
+         RowBox[{
+          RowBox[{"{", "n_", "}"}], "\[Rule]", "n"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+       "Find", " ", "all", " ", "positions", " ", "with", " ", "only", " ", 
+        "one", " ", "possible", " ", "value"}], "*)"}], "\[IndentingNewLine]",
+       "\t\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"Length", "[", 
+           RowBox[{"Union", "[", "known", "]"}], "]"}], "<", 
+          RowBox[{"Length", "[", "known", "]"}]}], "||", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Count", "[", 
+            RowBox[{"data", ",", 
+             RowBox[{"{", "}"}]}], "]"}], ">", "0"}], ")"}]}], ",", 
+        RowBox[{"Throw", "[", "Contradiction", "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{
+        "If", " ", "the", " ", "same", " ", "number", " ", "is", " ", "known",
+          " ", "twice"}], ",", " ", 
+        RowBox[{"then", " ", "we", " ", "have", " ", "a", " ", "conflict"}]}],
+        "*)"}], " ", "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+       "If", " ", "there", " ", "are", " ", "no", " ", "remaining", " ", 
+        "possible", " ", "values", " ", "for", " ", "a", " ", "position", " ",
+         "then", " ", "we", " ", "have", " ", "an", " ", "error"}], "*)"}], 
+      "\[IndentingNewLine]", "\t\t\t", 
+      RowBox[{"d2", "=", 
+       RowBox[{"Map", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Length", "[", "#", "]"}], "===", "1"}], ",", "#", ",", 
+            RowBox[{"Complement", "[", 
+             RowBox[{"#", ",", "known"}], "]"}]}], "]"}], "&"}], ",", 
+         "data"}], "]"}]}], ";", "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{
+        "Eliminate", " ", "the", " ", "known", " ", "values", " ", "from", 
+         " ", "each", " ", "position"}], ",", " ", 
+        RowBox[{
+        "except", " ", "those", " ", "positions", " ", "that", " ", "are", 
+         " ", "length", " ", "1", " ", "and", " ", "thus", " ", "known"}]}], 
+       "*)"}], "\[IndentingNewLine]", "\t\t\t", 
+      RowBox[{"d2", "/.", 
+       RowBox[{"Map", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"___", ",", "#", ",", "___"}], "}"}], "\[Rule]", 
+           RowBox[{"{", "#", "}"}]}], "&"}], ",", 
+         RowBox[{"Cases", "[", 
+          RowBox[{
+           RowBox[{"Frequencies", "[", 
+            RowBox[{"Flatten", "[", "d2", "]"}], "]"}], ",", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"1", ",", "n_"}], "}"}], "\[Rule]", "n"}]}], "]"}]}], 
+        "]"}]}]}]}], "\[IndentingNewLine]", "\t\t\t\t", 
+    RowBox[{"(*", 
+     RowBox[{
+     "If", " ", "a", " ", "value", " ", "only", " ", "occurs", " ", "in", " ",
+       "once", " ", "place", " ", "on", " ", "a", " ", "line", " ", "then", 
+      " ", "all", " ", "other", " ", "possibilities", " ", "can", " ", "be", 
+      " ", "removed", " ", "from", " ", "that", " ", 
+      RowBox[{"entry", "."}]}], "*)"}], "\[IndentingNewLine]", "\t\t\t\t", 
+    RowBox[{"(*", 
+     RowBox[{"Repeat", " ", "for", " ", "all", " ", 
+      RowBox[{"numbers", "."}]}], "*)"}], "\[IndentingNewLine]", 
+    "\t\t\t\t\t\t\t", "]"}]}], ";"}]], "InputOnly",ExpressionUUID->"376cf80b-\
+b72a-45d5-91c9-240ff4d954b3"],
+
+Cell["\<\
+A function to apply all logic currently supported for a single line in \
+isolation. 
+1) Eliminate values that are known from other positions 
+2) Search for numbers that occur only once and set them as known\
+\>", "Text",ExpressionUUID->"35f0d611-c684-430e-a29e-04538a8d2554"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SudokuProcess", "[", "data_", "]"}], ":=", 
+   RowBox[{"FixedPoint", "[", "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Block", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"workingdata", "=", "#"}], "}"}], ",", "\[IndentingNewLine]",
+         "\t\t\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"workingdata", "=", 
+          RowBox[{"Map", "[", 
+           RowBox[{"LineSimplify", ",", "workingdata"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", "\t\t\t\t\t\t\t", 
+         RowBox[{"workingdata", "=", 
+          RowBox[{"Transpose", "[", 
+           RowBox[{"Map", "[", 
+            RowBox[{"LineSimplify", ",", 
+             RowBox[{"Transpose", "[", "workingdata", "]"}]}], "]"}], "]"}]}],
+          ";", "\[IndentingNewLine]", "\t\t\t\t\t\t\t", 
+         RowBox[{"workingdata", "=", 
+          RowBox[{"FromSubMatrices", "[", 
+           RowBox[{"Map", "[", 
+            RowBox[{"LineSimplify", ",", 
+             RowBox[{"FromSubMatrices", "[", "workingdata", "]"}]}], "]"}], 
+           "]"}]}]}]}], "]"}], "&"}], ",", "\[IndentingNewLine]", 
+     "\t\t\t\t\t\t\t", "data"}], "]"}]}], ";"}]], "InputOnly",ExpressionUUID->\
+"0f0fc881-cdc5-4f30-a8e2-391109428c6e"],
+
+Cell["\<\
+Apply the line simplification function to all rows, columns and sub-grids \
+(rearranged into lines and back again).\
+\>", "Text",ExpressionUUID->"6b74a9be-3b4e-4242-829a-c134682da4a2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApplySudokuLogic", "[", 
+    RowBox[{"data_", ",", "opts___Rule"}], "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "firstunsolved", ",", "firstunsolvedposition", ",", "step", ",", 
+       "\[IndentingNewLine]", "\t\t\t\t\t\t\t\t\t\t\t", 
+       RowBox[{"showsteps", "=", 
+        RowBox[{"TrueQ", "[", 
+         RowBox[{
+          RowBox[{"ShowSteps", "/.", 
+           RowBox[{"{", "opts", "}"}]}], "/.", 
+          RowBox[{"Options", "[", "SudokuSolve", "]"}]}], "]"}]}], ",", 
+       "\[IndentingNewLine]", "\t\t\t\t\t\t\t\t\t\t\t", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Check", " ", "for", " ", "verbose", " ", "message", " ", "option"}], 
+        "*)"}], "\[IndentingNewLine]", "\t\t\t\t\t\t\t\t\t\t\t", 
+       RowBox[{"workingdata", "=", 
+        RowBox[{"Catch", "[", 
+         RowBox[{"FixedPoint", "[", 
+          RowBox[{"SudokuProcess", ",", "data"}], "]"}], "]"}]}]}], 
+      "\[IndentingNewLine]", "\t\t\t\t\t\t\t\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+       "Apply", " ", "the", " ", "logic", " ", "steps", " ", "until", " ", 
+        "no", " ", "more", " ", "progres", " ", "is", " ", "made"}], "*)"}], 
+      "\[IndentingNewLine]", "\t\t\t\t\t\t\t\t\t\t\t", "}"}], ",", 
+     "\[IndentingNewLine]", "\[IndentingNewLine]", "\t\t\t\t", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"workingdata", "===", "Contradiction"}], ",", 
+        RowBox[{"Throw", "[", "Contradiction", "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{
+        "If", " ", "a", " ", "contradiction", " ", "is", " ", "arrived", " ", 
+         "at"}], ",", " ", 
+        RowBox[{
+        "throw", " ", "the", " ", "error", " ", "state", " ", "up", " ", "a", 
+         " ", "level", " ", "in", " ", "the", " ", "recursion"}]}], "*)"}], 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", "\t\t\t\t", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"SudokuSolvedQ", "[", "workingdata", "]"}], ",", 
+        "workingdata", ",", "\[IndentingNewLine]", "\t\t\t\t\t", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{
+          "If", " ", "the", " ", "problem", " ", "is", " ", "solved"}], ",", 
+          " ", "stop"}], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]",
+         "\t\t\t\t\t", 
+        RowBox[{
+         RowBox[{"firstunsolved", "=", 
+          RowBox[{"First", "[", 
+           RowBox[{"Cases", "[", 
+            RowBox[{"workingdata", ",", 
+             RowBox[{"{", 
+              RowBox[{"n_Integer", ",", "m__Integer"}], "}"}], ",", 
+             RowBox[{"{", "2", "}"}]}], "]"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"(*", 
+          RowBox[{
+          "Otherwise", " ", "find", " ", "the", " ", "first", " ", "unsolved",
+            " ", "position", " ", "possible", " ", "values"}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"firstunsolved", "===", 
+            RowBox[{"{", "}"}]}], ",", 
+           RowBox[{"Throw", "[", "Contradiction", "]"}]}], "]"}], ";", 
+         "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "If", " ", "there", " ", "are", " ", "no", " ", "possible", " ", 
+            "values"}], ",", " ", 
+           RowBox[{"throw", " ", "an", " ", "error"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\t\t\t\t\t\t\t", 
+         RowBox[{"firstunsolvedposition", "=", 
+          RowBox[{"First", "[", 
+           RowBox[{"Position", "[", 
+            RowBox[{"workingdata", ",", "firstunsolved"}], "]"}], "]"}]}], 
+         ";", "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{"showsteps", ",", 
+           RowBox[{"Print", "[", 
+            RowBox[{"\"\<Guessing \>\"", ",", 
+             RowBox[{"First", "[", "firstunsolved", "]"}], ",", 
+             "\"\< at \>\"", ",", "firstunsolvedposition"}], "]"}]}], "]"}], 
+         ";", "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"step", "=", 
+          RowBox[{"Catch", "[", 
+           RowBox[{"ApplySudokuLogic", "[", 
+            RowBox[{
+             RowBox[{"ReplacePart", "[", 
+              RowBox[{"workingdata", ",", " ", 
+               RowBox[{"Take", "[", 
+                RowBox[{"firstunsolved", ",", "1"}], "]"}], ",", " ", 
+               "firstunsolvedposition"}], "]"}], ",", "opts"}], "]"}], 
+           "]"}]}], ";", "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "Choose", " ", "the", " ", "first", " ", "of", " ", "the", " ", 
+           "possible", " ", "values", " ", "and", " ", "attempt", " ", "to", 
+           " ", "solve", " ", "again"}], "*)"}], "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", "\t\t\t\t\t", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"step", "===", "Contradiction"}], ",", 
+           "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+             "showsteps", ",", "\[IndentingNewLine]", "\t\t\t\t\t\t\t", 
+              RowBox[{"Print", "[", 
+               RowBox[{"\"\<Guess \>\"", ",", 
+                RowBox[{"First", "[", "firstunsolved", "]"}], ",", 
+                "\"\< at \>\"", ",", "firstunsolvedposition", ",", " ", 
+                "\"\< failed. Must be one of \>\"", ",", 
+                RowBox[{"Rest", "[", "firstunsolved", "]"}]}], "]"}]}], "]"}],
+             ";", "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+            RowBox[{"Catch", "[", 
+             RowBox[{"ApplySudokuLogic", "[", 
+              RowBox[{
+               RowBox[{"ReplacePart", "[", 
+                RowBox[{"workingdata", ",", " ", 
+                 RowBox[{"Rest", "[", "firstunsolved", "]"}], ",", " ", 
+                 "firstunsolvedposition"}], "]"}], ",", "opts"}], "]"}], 
+             "]"}]}], ",", "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+           RowBox[{"(*", 
+            RowBox[{
+             RowBox[{
+             "If", " ", "a", " ", "contradiction", " ", "results", " ", 
+              "from", " ", "the", " ", "guess"}], ",", " ", 
+             RowBox[{
+             "eliminate", " ", "this", " ", "possibility", " ", "and", " ", 
+              "try", " ", "to", " ", "solve", " ", "again"}]}], "*)"}], 
+           "\[IndentingNewLine]", "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+           "step"}], "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+          RowBox[{"(*", 
+           RowBox[{"Otherwise", " ", "return", " ", "the", " ", "result"}], 
+           "*)"}], "\[IndentingNewLine]", "\t\t\t\t\t\t", 
+          "\[IndentingNewLine]", "\t\t\t\t\t", "]"}]}]}], 
+       "\[IndentingNewLine]", "\t\t\t\t", "]"}]}]}], "\[IndentingNewLine]", 
+    "\[IndentingNewLine]", "\t\t\t", "]"}]}], ";"}]], "InputOnly",ExpressionUU\
+ID->"e34b40c4-8f30-49d8-a9d3-36533e0a8831"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SudokuSolve", "[", 
+    RowBox[{"data_", ",", "opts___Rule"}], "]"}], ":=", 
+   RowBox[{"SudokuForm", "[", 
+    RowBox[{"Catch", "[", 
+     RowBox[{"ApplySudokuLogic", "[", 
+      RowBox[{
+       RowBox[{"Initialize", "[", "data", "]"}], ",", "opts"}], "]"}], "]"}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "SudokuSolve", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{"ShowSteps", "\[Rule]", "False"}], "}"}]}], ";"}]}], "InputOnly",E\
+xpressionUUID->"05272fa0-374a-46d7-8258-3aa3eb83ada9"],
+
+Cell[CellGroupData[{
+
+Cell["Tools", "Subsection",ExpressionUUID->"a4462ac6-dffc-4fa5-8077-b1640c77a7e5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SudokuSolvedQ", "[", "data_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"Dimensions", "[", "data", "]"}], "===", 
+    RowBox[{"{", 
+     RowBox[{"9", ",", "9", ",", "1"}], "}"}]}]}], ";"}]], "InputOnly",Express\
+ionUUID->"1d247834-8da2-4ad4-b06c-fb6ace4d9057"],
+
+Cell["\<\
+A test to see if we have completed the problem. If all 9\[Times]9 positions \
+are of length 1, it is solved.\
+\>", "Text",ExpressionUUID->"04922f5b-a0ab-447c-bab2-175e4f70a402"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SubMatrix3", "[", 
+   RowBox[{"data_", ",", 
+    RowBox[{"{", 
+     RowBox[{"i_", ",", "j_"}], "}"}]}], "]"}], ":=", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"data", "[", 
+     RowBox[{"[", 
+      RowBox[{
+       RowBox[{"i", "+", "m", "-", "1"}], ",", 
+       RowBox[{"j", "+", "n", "-", "1"}]}], "]"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"m", ",", "3"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"n", ",", "3"}], "}"}]}], "]"}]}]], "InputOnly",ExpressionUUID->\
+"6619af09-ada2-4a46-b5c4-e571e424b0f5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FromSubMatrices", "[", "data_List", "]"}], ":=", 
+  RowBox[{"Flatten", "[", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Flatten", "[", 
+       RowBox[{
+        RowBox[{"SubMatrix3", "[", 
+         RowBox[{"data", ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "j"}], "}"}]}], "]"}], ",", "1"}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "1", ",", "7", ",", "3"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"j", ",", "1", ",", "7", ",", "3"}], "}"}]}], "]"}], ",", 
+    "1"}], "]"}]}]], "InputOnly",ExpressionUUID->"54643be1-a556-444f-a572-\
+91c0792c9227"],
+
+Cell["\<\
+Commands to convert the 3\[Times]3 sub-grids into a matrix of 9 element rows \
+and back again. This allows us to use the same code for cleaning and deducing \
+from rows on the sub-grids. It can also be used on columns by using Transpose \
+and then Transposing back again.\
+\>", "Text",ExpressionUUID->"9766674a-a32e-444f-82ab-9fb7e882e259"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Initialize", "[", "data_", "]"}], ":=", 
+  RowBox[{"Map", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "#", "]"}], "===", "Integer"}], ",", 
+       RowBox[{"{", "#", "}"}], ",", 
+       RowBox[{"Range", "[", "9", "]"}]}], "]"}], "&"}], ",", "data", ",", 
+    RowBox[{"{", "2", "}"}]}], "]"}]}]], "InputOnly",ExpressionUUID->\
+"6a71367a-94cd-4f22-bbbc-124ccb2f16d0"],
+
+Cell["\<\
+A command to initialize all the unspecified positions with a list of all \
+possible values. Called only once at the start of the solver.\
+\>", "Text",ExpressionUUID->"405432bf-ce86-41e3-8add-d6b39c561273"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"MakeBoxes", "[", 
+    RowBox[{
+     RowBox[{"SudokuForm", "[", "data_List", "]"}], ",", "form_"}], "]"}], ":=", 
+   RowBox[{"GridBox", "[", 
+    RowBox[{
+     RowBox[{"data", "/.", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"List", "[", "n__Integer", "]"}], "/;", 
+          RowBox[{
+           RowBox[{"Length", "[", 
+            RowBox[{"{", "n", "}"}], "]"}], ">", "1"}]}], "->", "\"\<\>\""}], 
+        ",", 
+        RowBox[{
+         RowBox[{"{", "n_Integer", "}"}], ":>", 
+         RowBox[{"ToString", "[", "n", "]"}]}]}], "}"}]}], ",", 
+     RowBox[{"RowLines", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "1", ",", "1", ",", "2", ",", "1", ",", "1", ",", "2", ",", "1"}], 
+       "}"}]}], ",", 
+     RowBox[{"ColumnLines", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "1", ",", "1", ",", "2", ",", "1", ",", "1", ",", "2", ",", "1"}], 
+       "}"}]}], ",", 
+     RowBox[{"GridFrame", "\[Rule]", "True"}], ",", 
+     RowBox[{"RowsEqual", "\[Rule]", "True"}], ",", 
+     RowBox[{"ColumnsEqual", "\[Rule]", "True"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MakeBoxes", "[", 
+    RowBox[{
+     RowBox[{"SudokuForm", "[", "other_", "]"}], ",", "form_"}], "]"}], ":=", 
+   RowBox[{"MakeBoxes", "[", 
+    RowBox[{"other", ",", "form"}], "]"}]}], ";"}]}], "InputOnly",ExpressionUU\
+ID->"6cf62b14-0669-41ec-8022-d4224c3f4df1"],
+
+Cell["\<\
+A formatting command for printing the problem out as a grid with the \
+sub-grids highlighted\
+\>", "Text",ExpressionUUID->"408a3aff-cc5d-4a42-a907-8662e13b572a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowSteps", "[", "msg___", "]"}], ":=", 
+   RowBox[{"If", "[", 
+    RowBox[{"$ShowSteps", ",", 
+     RowBox[{"Print", "[", "msg", "]"}]}], "]"}]}], ";"}]], "InputOnly",Expres\
+sionUUID->"2fc77b6d-c0dc-48ea-a909-70645aa78296"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Work to do", "Section",
+ ShowGroupOpener->True,ExpressionUUID->"3352e2ac-327c-4d3c-a7f6-7be1288a9412"],
+
+Cell[CellGroupData[{
+
+Cell["Higher level logic:", "Subsection",ExpressionUUID->"5524f349-3958-4245-a816-54b1fb5a8875"],
+
+Cell["\<\
+LineSimplify uses a \"level 1\" logic, in that it can eliminate values once a \
+value is found to be one value in one place.
+LineSimplify could be extended to eliminate when two values are known in two \
+places eg {1,2},{1,2} allows us to  remove 1 and 2 from other entries.
+And {1,2,3},{1,2,3},{1,2,3}, eliminates 1,2,3 from others. etc\
+\>", "Text",ExpressionUUID->"da6ee1f5-821a-4f0a-a965-fd4734b50bd6"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Cross dimensional logic", "Subsection",ExpressionUUID->"e34b4b8b-ffb6-4905-bb61-c35004c72aa9"],
+
+Cell["\<\
+The logic used in this code considers each row, column and sub-grid in \
+isolation. The more interesting rules to apply, as a human solving the \
+problems, combine information between these three dimensions.
+Consider the following, part-solved, example. In the 1,2 sub-grid, there are \
+only two places for \"2\" to appear. So it must appear in one them, but since \
+they are both in the same line in another dimension (column in this case), we \
+can eliminate all other \"2\"s in the column such as the one at 5,4 (in the \
+2,2 sub-grid).\
+\>", "Text",ExpressionUUID->"3a678c7f-f78d-48fc-b8a0-bed0f8196a03"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[NoBreak]", GridBox[{
+     {
+      RowBox[{"{", 
+       RowBox[{"4", ",", "5"}], "}"}], 
+      RowBox[{"{", "3", "}"}], 
+      RowBox[{"{", "8", "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", "6", "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "2", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"4", ",", "5"}], "}"}]},
+     {
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "5", ",", "6"}], "}"}], 
+      StyleBox[
+       RowBox[{"{", 
+        RowBox[{"2", ",", "3", ",", "4"}], "}"}],
+       FontWeight->"Bold"], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "8"}], "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "5", ",", "6", ",", "8"}], "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "6", ",", "7"}], "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "6", ",", "7"}], "}"}], 
+      StyleBox[
+       RowBox[{"{", 
+        RowBox[{"2", ",", "3", ",", "4"}], "}"}],
+       FontWeight->"Bold"], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "8"}], "}"}], 
+      RowBox[{"{", "5", "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "6", ",", "8"}], "}"}]},
+     {
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", "8", "}"}], 
+      RowBox[{"{", "6", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "4"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "5"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4", ",", "5"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "4", ",", "5"}], "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "8"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "8"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "5"}], "}"}], 
+      StyleBox[
+       RowBox[{"{", 
+        RowBox[{"2", ",", "3", ",", "4"}], "}"}],
+       FontWeight->"Bold"], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "4"}], "}"}], 
+      RowBox[{"{", "6", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", "9", "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "4", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "6"}], "}"}], 
+      RowBox[{"{", "5", "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4"}], "}"}], 
+      RowBox[{"{", "8", "}"}], 
+      RowBox[{"{", "1", "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"3", ",", "6", ",", "7", ",", "8"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"6", ",", "8"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "6", ",", "7"}], "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "2", "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"4", ",", "5", ",", "8"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"4", ",", "5", ",", "6"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"4", ",", "5", ",", "6", ",", "7", ",", "8"}], "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3", ",", "6", ",", "8"}], "}"}], 
+      RowBox[{"{", "5", "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", "7", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"3", ",", "4"}], "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "8"}], "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "4", ",", "6", ",", "8"}], "}"}]},
+     {
+      RowBox[{"{", 
+       RowBox[{"2", ",", "7"}], "}"}], 
+      RowBox[{"{", "1", "}"}], 
+      RowBox[{"{", "4", "}"}], 
+      RowBox[{"{", "6", "}"}], 
+      RowBox[{"{", "5", "}"}], 
+      RowBox[{"{", "8", "}"}], 
+      RowBox[{"{", "3", "}"}], 
+      RowBox[{"{", "9", "}"}], 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "7"}], "}"}]}
+    },
+    ColumnsEqual->True,
+    GridBoxDividers->{"Columns" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+    RowsEqual->True], "\[NoBreak]"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "InputOnly",
+ CellFrame->False,
+ Evaluatable->False,
+ FontWeight->"Plain",
+ Background->None,ExpressionUUID->"b0b962d4-b005-42d3-b0cc-361095401dfc"],
+
+Cell["\<\
+Generalizing,-if within a particular dimension, all possible positions for a \
+value lie in the same (other) dimension, then you can eliminate all \
+occurrences in the rest of that other dimension. 
+This is true for a single value case too and would replace the current \
+LineEliminate which is just a special case of this.\
+\>", "Text",ExpressionUUID->"c31e69f7-51be-4443-9e57-9ef84cce6b4c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Super Sudoku", "Subsection",ExpressionUUID->"cc844f55-46c1-4f9d-882f-d0235839d462"],
+
+Cell["\<\
+The code could easily be extended to cover the hexadecimal version of the \
+problem with 16\[Times]16 grid and 4\[Times]4 sub-grids  or even higher order \
+puzzles.\
+\>", "Text",ExpressionUUID->"cf42a48b-2d8e-44f9-a07c-1289d35bc4c9"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Section",
+ ShowGroupOpener->True,ExpressionUUID->"b3163e41-fbcc-490e-89b2-6f08bf450f4f"],
+
+Cell[CellGroupData[{
+
+Cell["Intermediate", "Subsection",ExpressionUUID->"afbe128d-19b3-4121-aa61-09b1bfc21bed"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {" ", "6", " ", "1", " ", "4", " ", "5", " "},
+    {" ", " ", "8", "3", " ", "5", "6", " ", " "},
+    {"2", " ", " ", " ", " ", " ", " ", " ", "1"},
+    {"8", " ", " ", "4", " ", "7", " ", " ", "6"},
+    {" ", " ", "6", " ", " ", " ", "3", " ", " "},
+    {"7", " ", " ", "9", " ", "1", " ", " ", "4"},
+    {"5", " ", " ", " ", " ", " ", " ", " ", "2"},
+    {" ", " ", "7", "2", " ", "6", "9", " ", " "},
+    {" ", "4", " ", "5", " ", "8", " ", "7", " "}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "Input",ExpressionUUID->"3f06d5f2-f64c-4033-800b-\
+2d570282836c"],
+
+Cell[BoxData[GridBox[{
+   {"9", "6", "3", "1", "7", "4", "2", "5", "8"},
+   {"1", "7", "8", "3", "2", "5", "6", "4", "9"},
+   {"2", "5", "4", "6", "8", "9", "7", "3", "1"},
+   {"8", "2", "1", "4", "3", "7", "5", "9", "6"},
+   {"4", "9", "6", "8", "5", "2", "3", "1", "7"},
+   {"7", "3", "5", "9", "6", "1", "8", "2", "4"},
+   {"5", "8", "9", "7", "1", "3", "4", "6", "2"},
+   {"3", "1", "7", "2", "4", "6", "9", "8", "5"},
+   {"6", "4", "2", "5", "9", "8", "1", "7", "3"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"e60d8b5e-f824-480d-a8dd-\
+caaef62de4e9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {" ", " ", "6", " ", "1", "3", " ", " ", " "},
+    {"3", "9", " ", " ", " ", " ", " ", "1", " "},
+    {"2", "1", "8", " ", " ", " ", "4", " ", " "},
+    {"8", "7", " ", "2", " ", " ", " ", " ", " "},
+    {" ", " ", " ", "8", "6", "1", " ", " ", " "},
+    {" ", " ", " ", " ", " ", "7", " ", "4", "9"},
+    {" ", " ", "3", " ", " ", " ", "7", " ", "8"},
+    {" ", "4", " ", " ", " ", " ", " ", "2", "5"},
+    {" ", " ", " ", "9", "2", " ", "3", " ", " "}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "Input",ExpressionUUID->"1ee33347-93ce-4258-abfc-\
+bf0d0e7a4738"],
+
+Cell[BoxData[GridBox[{
+   {"4", "5", "6", "7", "1", "3", "9", "8", "2"},
+   {"3", "9", "7", "4", "8", "2", "5", "1", "6"},
+   {"2", "1", "8", "6", "5", "9", "4", "7", "3"},
+   {"8", "7", "5", "2", "9", "4", "6", "3", "1"},
+   {"9", "3", "4", "8", "6", "1", "2", "5", "7"},
+   {"1", "6", "2", "5", "3", "7", "8", "4", "9"},
+   {"5", "2", "3", "1", "4", "6", "7", "9", "8"},
+   {"6", "4", "9", "3", "7", "8", "1", "2", "5"},
+   {"7", "8", "1", "9", "2", "5", "3", "6", "4"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"2675df71-dd85-429c-a7bd-\
+8f1a954afb5f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {" ", "3", " ", " ", " ", " ", " ", "7", " "},
+    {" ", "1", " ", "8", " ", "6", " ", "2", " "},
+    {" ", " ", "9", "1", "7", "5", "4", " ", " "},
+    {" ", " ", "7", " ", " ", " ", "6", " ", " "},
+    {"2", " ", " ", "4", " ", "9", " ", " ", "3"},
+    {" ", " ", "3", " ", " ", " ", "1", " ", " "},
+    {" ", " ", "1", "5", "4", "8", "2", " ", " "},
+    {" ", "6", " ", "3", " ", "2", " ", "1", " "},
+    {" ", "5", " ", " ", " ", " ", " ", "4", " "}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "Input",ExpressionUUID->"30b52d82-b521-45e2-91ce-\
+f412ec0e2883"],
+
+Cell[BoxData[GridBox[{
+   {"6", "3", "5", "9", "2", "4", "8", "7", "1"},
+   {"7", "1", "4", "8", "3", "6", "9", "2", "5"},
+   {"8", "2", "9", "1", "7", "5", "4", "3", "6"},
+   {"1", "9", "7", "2", "5", "3", "6", "8", "4"},
+   {"2", "8", "6", "4", "1", "9", "7", "5", "3"},
+   {"5", "4", "3", "6", "8", "7", "1", "9", "2"},
+   {"3", "7", "1", "5", "4", "8", "2", "6", "9"},
+   {"4", "6", "8", "3", "9", "2", "5", "1", "7"},
+   {"9", "5", "2", "7", "6", "1", "3", "4", "8"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"b9eb5158-813e-4d5c-b696-\
+85e05f7e69c6"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Expert", "Subsection",ExpressionUUID->"92433ca5-33b0-4a86-9b24-1facfc4c1fd4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {" ", " ", "8", "1", "7", "6", " ", "2", " "},
+    {" ", "4", " ", " ", " ", "9", "7", " ", " "},
+    {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+    {" ", "7", "1", "8", " ", " ", " ", " ", " "},
+    {" ", " ", " ", " ", " ", " ", "6", "7", "9"},
+    {" ", " ", " ", "5", "9", "7", " ", "8", "1"},
+    {" ", " ", " ", " ", "2", " ", " ", " ", " "},
+    {" ", "5", "9", " ", " ", " ", " ", "1", " "},
+    {" ", "1", "4", "6", "5", " ", "3", " ", " "}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "Input",ExpressionUUID->"bb4c5421-a035-4362-9e80-\
+3056d3cb48a1"],
+
+Cell[BoxData[GridBox[{
+   {"5", "3", "8", "1", "7", "6", "9", "2", "4"},
+   {"1", "4", "2", "3", "8", "9", "7", "5", "6"},
+   {"7", "9", "6", "2", "4", "5", "1", "3", "8"},
+   {"9", "7", "1", "8", "6", "2", "5", "4", "3"},
+   {"8", "2", "5", "4", "1", "3", "6", "7", "9"},
+   {"4", "6", "3", "5", "9", "7", "2", "8", "1"},
+   {"3", "8", "7", "9", "2", "1", "4", "6", "5"},
+   {"6", "5", "9", "7", "3", "4", "8", "1", "2"},
+   {"2", "1", "4", "6", "5", "8", "3", "9", "7"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"0a28a744-7bc8-41ce-88cc-\
+f631119c0fe4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", 
+  RowBox[{GridBox[{
+     {"5", "3", "8", "1", "7", "6", " ", "2", " "},
+     {" ", " ", " ", " ", " ", "9", "7", " ", " "},
+     {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+     {" ", "7", "1", "8", " ", " ", " ", " ", " "},
+     {" ", " ", " ", " ", " ", " ", "6", "7", "9"},
+     {" ", " ", " ", "5", "9", "7", " ", "8", "1"},
+     {" ", " ", " ", " ", "2", " ", " ", " ", " "},
+     {" ", "5", "9", " ", " ", " ", " ", "1", " "},
+     {" ", "1", "4", "6", "5", " ", "3", " ", " "}
+    },
+    ColumnsEqual->True,
+    GridBoxDividers->{"Columns" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+    RowsEqual->True], ",", 
+   RowBox[{"ShowSteps", "\[Rule]", "True"}]}], "]"}]], "Input",ExpressionUUID-\
+>"7c1df76d-9fb6-4504-af0a-e48d67230e05"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 2}],
+  Editable->False]], "Print",ExpressionUUID->"d94c24a7-e5b4-452e-943b-\
+25f2a8636d7c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"f3d36b73-fbfe-47f0-903e-\
+87bea99871b8"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {7, 1}],
+  Editable->False]], "Print",ExpressionUUID->"463d6939-4173-4718-a7bb-\
+bafb1dfa9d21"],
+
+Cell[BoxData[GridBox[{
+   {"5", "3", "8", "1", "7", "6", "9", "2", "4"},
+   {"1", "2", "6", "4", "3", "9", "7", "5", "8"},
+   {"4", "9", "7", "2", "8", "5", "1", "6", "3"},
+   {"9", "7", "1", "8", "6", "4", "2", "3", "5"},
+   {"8", "4", "5", "3", "1", "2", "6", "7", "9"},
+   {"3", "6", "2", "5", "9", "7", "4", "8", "1"},
+   {"6", "8", "3", "9", "2", "1", "5", "4", "7"},
+   {"2", "5", "9", "7", "4", "3", "8", "1", "6"},
+   {"7", "1", "4", "6", "5", "8", "3", "9", "2"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"b4f6840d-51ae-4541-9eb6-\
+2a848bff53fd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", 
+  RowBox[{GridBox[{
+     {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+      "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+      "\[Placeholder]"},
+     {"\[Placeholder]", "6", "8", "4", "\[Placeholder]", "1", 
+      "\[Placeholder]", "7", "\[Placeholder]"},
+     {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+      "8", "5", "\[Placeholder]", "3", "\[Placeholder]"},
+     {"\[Placeholder]", "2", "6", "8", "\[Placeholder]", "9", 
+      "\[Placeholder]", "4", "\[Placeholder]"},
+     {"\[Placeholder]", "\[Placeholder]", "7", "\[Placeholder]", 
+      "\[Placeholder]", "\[Placeholder]", "9", "\[Placeholder]", 
+      "\[Placeholder]"},
+     {"\[Placeholder]", "5", "\[Placeholder]", "1", "\[Placeholder]", "6", 
+      "3", "2", "\[Placeholder]"},
+     {"\[Placeholder]", "4", "\[Placeholder]", "6", "1", "\[Placeholder]", 
+      "\[Placeholder]", "\[Placeholder]", "\[Placeholder]"},
+     {"\[Placeholder]", "3", "\[Placeholder]", "2", "\[Placeholder]", "7", 
+      "6", "9", "\[Placeholder]"},
+     {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+      "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+      "\[Placeholder]"}
+    },
+    ColumnsEqual->True,
+    GridBoxDividers->{"Columns" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+    RowsEqual->True], ",", 
+   RowBox[{"ShowSteps", "\[Rule]", "True"}]}], "]"}]], "Input",ExpressionUUID-\
+>"846b7c96-6fa9-4499-9541-a3f6f5d428b7"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {1, 1}],
+  Editable->False]], "Print",ExpressionUUID->"715e5103-31f1-4248-a5c6-\
+a5b0f40e5bc0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "5", ",", "7", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {1, 1}, " failed. Must be one of ", {4, 5, 7, 9}],
+  Editable->False]], "Print",ExpressionUUID->"b0a5bf71-fe24-4cce-bd13-\
+2220d85459fd"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {1, 1}],
+  Editable->False]], "Print",ExpressionUUID->"0fb02f84-639a-44d3-b92b-\
+bfd8f02e6375"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "7", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 4, " at ", {1, 1}, " failed. Must be one of ", {5, 7, 9}],
+  Editable->False]], "Print",ExpressionUUID->"e97acc64-e344-446b-af2b-\
+0ffed83c22e2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {1, 1}],
+  Editable->False]], "Print",ExpressionUUID->"6b2ceaab-674d-43d8-9223-\
+3d06a46b97b3"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {1, 2}],
+  Editable->False]], "Print",ExpressionUUID->"2b5117c2-6251-4ca8-bbe5-\
+4b8eba81b479"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {1, 2}, " failed. Must be one of ", {7, 9}],
+  Editable->False]], "Print",ExpressionUUID->"df762c34-c12f-45ad-b3ae-\
+deeaaac4b185"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {1, 2}],
+  Editable->False]], "Print",ExpressionUUID->"1ffe5bd3-a109-401b-b348-\
+385c63f70995"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "9", "}"}]}],
+  SequenceForm["Guess ", 7, " at ", {1, 2}, " failed. Must be one of ", {9}],
+  Editable->False]], "Print",ExpressionUUID->"ac42427f-74ba-4f8f-b064-\
+5dda582bd26a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {1, 7}],
+  Editable->False]], "Print",ExpressionUUID->"0b2e4417-61d5-4be3-9b62-\
+d1859e613fcc"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "8"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {1, 7}, " failed. Must be one of ", {4, 8}],
+  Editable->False]], "Print",ExpressionUUID->"30bbbd65-a37f-4dcd-a57b-\
+e43934603eed"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {1, 7}],
+  Editable->False]], "Print",ExpressionUUID->"756a7dfa-b18d-4f6a-8423-\
+b9d8eca0221b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "8"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {1, 8}],
+  Editable->False]], "Print",ExpressionUUID->"0dc06840-00ac-45ff-aa79-\
+f14c1e3234d0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "8"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "8", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {1, 8}, " failed. Must be one of ", {8}],
+  Editable->False]], "Print",ExpressionUUID->"5dd08c2f-1b01-4e73-8dab-\
+1c8fab862a29"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {3, 1}],
+  Editable->False]], "Print",ExpressionUUID->"421709ae-0ff7-430c-a97d-\
+9ae6d64e6e67"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "1"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "7"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {3, 1}, " failed. Must be one of ", {4, 7}],
+  Editable->False]], "Print",ExpressionUUID->"28326f7e-65c7-4f41-8d59-\
+3caeca1c3f9b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {3, 1}],
+  Editable->False]], "Print",ExpressionUUID->"9360608a-6b04-4fd4-92fb-\
+fe8368a66401"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "1"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "7", "}"}]}],
+  SequenceForm["Guess ", 4, " at ", {3, 1}, " failed. Must be one of ", {7}],
+  Editable->False]], "Print",ExpressionUUID->"fe3f312f-b5da-49e1-a181-\
+09abfb6959ef"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "8", "}"}]}],
+  SequenceForm["Guess ", 4, " at ", {1, 7}, " failed. Must be one of ", {8}],
+  Editable->False]], "Print",ExpressionUUID->"6f07983b-15ad-45be-bcf0-\
+940dac8a12fc"],
+
+Cell[BoxData[GridBox[{
+   {"5", "9", "3", "7", "6", "2", "8", "1", "4"},
+   {"2", "6", "8", "4", "3", "1", "5", "7", "9"},
+   {"7", "1", "4", "9", "8", "5", "2", "3", "6"},
+   {"3", "2", "6", "8", "5", "9", "1", "4", "7"},
+   {"1", "8", "7", "3", "2", "4", "9", "6", "5"},
+   {"4", "5", "9", "1", "7", "6", "3", "2", "8"},
+   {"9", "4", "2", "6", "1", "8", "7", "5", "3"},
+   {"8", "3", "5", "2", "4", "7", "6", "9", "1"},
+   {"6", "7", "1", "5", "9", "3", "4", "8", "2"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"b03452d2-01e3-4a9e-bf7c-\
+6a24b462a8f4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{GridBox[{
+    {"", "", "3", "", "6", "2", "", "", ""},
+    {"", "6", "8", "4", "3", "1", "", "7", ""},
+    {"", "", "", "", "8", "5", "", "3", "6"},
+    {"3", "2", "6", "8", "", "9", "", "4", ""},
+    {"", "", "7", "", "2", "", "9", "6", ""},
+    {"", "5", "", "1", "7", "6", "3", "2", ""},
+    {"", "4", "", "6", "1", "", "", "", ""},
+    {"", "3", "", "2", "", "7", "6", "9", ""},
+    {"6", "", "", "", "9", "", "", "", ""}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "//", "SudokuSolve"}]], "Input",ExpressionUUID->\
+"953bbe71-96c4-43b8-8599-e5c33597624c"],
+
+Cell[BoxData[GridBox[{
+   {"5", "9", "3", "7", "6", "2", "8", "1", "4"},
+   {"2", "6", "8", "4", "3", "1", "5", "7", "9"},
+   {"7", "1", "4", "9", "8", "5", "2", "3", "6"},
+   {"3", "2", "6", "8", "5", "9", "1", "4", "7"},
+   {"1", "8", "7", "3", "2", "4", "9", "6", "5"},
+   {"4", "5", "9", "1", "7", "6", "3", "2", "8"},
+   {"9", "4", "2", "6", "1", "8", "7", "5", "3"},
+   {"8", "3", "5", "2", "4", "7", "6", "9", "1"},
+   {"6", "7", "1", "5", "9", "3", "4", "8", "2"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"c1399ebb-18b8-4833-9cb4-\
+3aa83d17ac9c"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Seventeen hints", "Subsection",ExpressionUUID->"40706363-bc5d-4c7b-969a-d10db9929d05"],
+
+Cell["\<\
+Seventeen hints seems to be the minimum to produce a unique solution. The \
+Minimal Sudoku page maintains the known progress for this problem.\
+\>", "Text",ExpressionUUID->"1f11378e-a50a-4dd3-bb02-a4c753d4e270"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SudokuSolve", "[", GridBox[{
+    {"\[Placeholder]", "3", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "9", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"6", "\[Placeholder]", "\[Placeholder]", "4", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "7", "\[Placeholder]", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "7", "\[Placeholder]", "2", "9", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "3", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "6", 
+     "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "4", 
+     "\[Placeholder]"},
+    {"4", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]", "5", "\[Placeholder]", "8", "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "7", "\[Placeholder]", "3", "\[Placeholder]", "\[Placeholder]"},
+    {"\[Placeholder]", "\[Placeholder]", "1", "\[Placeholder]", 
+     "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", "\[Placeholder]", 
+     "\[Placeholder]"}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "]"}]], "InputOnly",ExpressionUUID->"6e4018eb-c90b-40db-\
+8147-c357db035931"],
+
+Cell[BoxData[GridBox[{
+   {"7", "3", "8", "5", "6", "2", "9", "1", "4"},
+   {"6", "2", "9", "4", "1", "7", "8", "5", "3"},
+   {"1", "4", "5", "9", "8", "3", "7", "2", "6"},
+   {"5", "7", "4", "2", "9", "6", "1", "3", "8"},
+   {"9", "1", "2", "3", "4", "8", "5", "6", "7"},
+   {"8", "6", "3", "7", "5", "1", "2", "4", "9"},
+   {"4", "9", "7", "1", "3", "5", "6", "8", "2"},
+   {"2", "5", "6", "8", "7", "4", "3", "9", "1"},
+   {"3", "8", "1", "6", "2", "9", "4", "7", "5"}
+  },
+  ColumnsEqual->True,
+  GridBoxDividers->{"Columns" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+    "Rows" -> {True, True, True, 
+      AbsoluteThickness[2], True, True, 
+      AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+  RowsEqual->True]], "Output",ExpressionUUID->"42e74bc4-cff8-4eb2-8361-\
+c51a803fd3e9"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Unsolvable problems", "Subsection",ExpressionUUID->"8cd1268b-e7a7-43e1-8389-440fc79971ff"],
+
+Cell["Some problems are contradictory and have no solution", "Text",ExpressionUUID->"95ca5c9f-e78f-49ff-a28a-9c4b81bd9e23"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{GridBox[{
+    {"4", "", "3", "7", "6", "2", "8", "", ""},
+    {"", "6", "8", "4", "3", "1", "", "7", ""},
+    {"", "", "", "", "8", "5", "", "3", "6"},
+    {"3", "2", "6", "8", "", "9", "", "4", ""},
+    {"", "", "7", "", "2", "", "9", "6", ""},
+    {"", "5", "", "1", "", "6", "3", "2", ""},
+    {"", "4", "", "6", "1", "", "", "", ""},
+    {"", "3", "", "2", "", "7", "6", "9", ""},
+    {"6", "", "", "", "9", "", "", "", ""}
+   },
+   ColumnsEqual->True,
+   GridBoxDividers->{"Columns" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+     "Rows" -> {True, True, True, 
+       AbsoluteThickness[2], True, True, 
+       AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+   RowsEqual->True], "//", "SudokuSolve"}]], "Input",ExpressionUUID->\
+"5af06362-7cfd-4dfa-9dd7-af299536a7d7"],
+
+Cell[BoxData["Contradiction"], "Output",ExpressionUUID->"e5958c00-e151-4c64-9523-79b198b40e30"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Highly under specified problems", "Subsection",ExpressionUUID->"c2019090-bcc6-4353-8918-231350f50f91"],
+
+Cell["\<\
+Some problems have more than one solution as they are under-specified. An \
+extreme example of this is the empty problem. A solution is found, but it is \
+only one of a vast number of solutions\
+\>", "Text",ExpressionUUID->"213146fb-124d-4423-bd24-310cbbc95e2f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SudokuSolve", "[", 
+   RowBox[{GridBox[{
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+      {" ", " ", " ", " ", " ", " ", "  ", " ", " "},
+      {" ", "  ", " ", " ", "  ", " ", " ", " ", " "}
+     },
+     ColumnsEqual->True,
+     GridBoxDividers->{"Columns" -> {True, True, True, 
+         AbsoluteThickness[2], True, True, 
+         AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+       "Rows" -> {True, True, True, 
+         AbsoluteThickness[2], True, True, 
+         AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+     RowsEqual->True], ",", 
+    RowBox[{"ShowSteps", "\[Rule]", "True"}]}], "]"}], "//", 
+  "Timing"}]], "Input",ExpressionUUID->"86c1cd4d-583d-421a-9839-1f5e30ab5b5d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {1, 1}],
+  Editable->False]], "Print",ExpressionUUID->"a9169bed-40c2-4c02-9bdd-\
+cc3012106107"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {1, 2}],
+  Editable->False]], "Print",ExpressionUUID->"a6a2dc63-45ce-4452-817b-\
+9450db92b5af"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {1, 3}],
+  Editable->False]], "Print",ExpressionUUID->"9e797584-11d6-4491-9c3a-\
+749d1ff5681a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {1, 4}],
+  Editable->False]], "Print",ExpressionUUID->"776f699f-8e18-4e2c-bc04-\
+c9971d2f9240"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {1, 5}],
+  Editable->False]], "Print",ExpressionUUID->"c6243661-b581-44d2-bf30-\
+01cd7f7aaf31"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "6"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {1, 6}],
+  Editable->False]], "Print",ExpressionUUID->"0cffe0fa-7a14-4ae3-9da4-\
+dec0cd659fdd"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {1, 7}],
+  Editable->False]], "Print",ExpressionUUID->"86330f7c-96c0-4bc3-a2f4-\
+4ddca247e75c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "8"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {1, 8}],
+  Editable->False]], "Print",ExpressionUUID->"d5143ec1-6fe0-429b-a187-\
+94e51f2cded2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {2, 1}],
+  Editable->False]], "Print",ExpressionUUID->"09ea3b9b-6b49-4f51-b075-\
+3b37f5ff6d0d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {2, 2}],
+  Editable->False]], "Print",ExpressionUUID->"6c8721da-3fe8-494f-b112-\
+a67964bc26e0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {2, 3}],
+  Editable->False]], "Print",ExpressionUUID->"a8f5a2cc-4049-4f51-8e6f-\
+d041efcb5c09"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 4}],
+  Editable->False]], "Print",ExpressionUUID->"6bfd7941-a20d-43b6-8e2b-\
+889369183328"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"98dd190e-f85b-4443-9a29-\
+5a9587d58cea"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 2, " at ", {2, 5}, " failed. Must be one of ", {3, 7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"081ffe28-2124-4bb6-9026-\
+cb605cd1644c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"65d07467-c755-487b-9a03-\
+4934813e095c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 3, " at ", {2, 5}, " failed. Must be one of ", {7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"a7f70d71-90a7-4513-8880-\
+57406fb2d0ac"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"d9bb2ace-1767-42ae-bddc-\
+7442e9e3173e"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"38a855aa-d2d6-4447-8a6f-\
+f3557e342058"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 2, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"51505f62-0425-4767-a082-\
+f794852a14ed"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 7, " at ", {2, 5}, " failed. Must be one of ", {8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"bb40fb01-67ba-4fb7-a71a-\
+bc13cabf9c4f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"358efaa1-faaf-47e8-bdaa-\
+36c988af2166"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 2, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"cf70b2c5-47d1-4c48-8679-\
+41d20b5b3c90"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {2, 4}, " failed. Must be one of ", {2, 3, 7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"214cfdb1-1957-46fb-aa2f-\
+ed339d8a4a19"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 4}],
+  Editable->False]], "Print",ExpressionUUID->"5568c784-20c6-4804-9c48-\
+f984d8fe4fb5"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"0779c17f-3767-47cc-b134-\
+5484f0acd409"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {2, 5}, " failed. Must be one of ", {3, 7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"1011d15d-f153-494e-b8b4-\
+f51951fceb83"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"7b4e6279-84f5-488a-a380-\
+34dce2d26588"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 3, " at ", {2, 5}, " failed. Must be one of ", {7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"57091c64-bd44-47b3-9db9-\
+d69b36ff2837"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"f02eaf4f-4e3a-4402-abfe-\
+1cfd169bc1bb"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"273806b0-8991-47a9-ad27-\
+268dc74a424e"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"3232dbf4-2ad2-413c-8665-\
+c9afab0036d0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 7, " at ", {2, 5}, " failed. Must be one of ", {8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"5e90e196-e487-47cc-a6eb-\
+f4aa764c2894"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"fd08d451-61e5-4363-a1f4-\
+b4fabfa80b7f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"bdb79d17-81be-4d3d-bc54-\
+392d079bb005"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 2, " at ", {2, 4}, " failed. Must be one of ", {3, 7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"70bcb88e-d1c6-4085-b35b-\
+185ca75edc9b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {2, 4}],
+  Editable->False]], "Print",ExpressionUUID->"476f063a-bde9-4dcf-923f-\
+cebc1ab19f07"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"3e1e88d2-e068-404e-826f-\
+915d949753ca"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {2, 5}, " failed. Must be one of ", {2, 7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"2e5591f7-49b8-4407-a1c5-\
+336a51eff277"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"25fe9187-042e-41da-b97d-\
+679de559dd18"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 2, " at ", {2, 5}, " failed. Must be one of ", {7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"0446f688-00bd-4392-a595-\
+ca339f2ce9c9"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"c3462e03-9029-4beb-a59e-\
+5536ab2b9617"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"8248795d-d4e6-4339-8ae5-\
+e6d4b7354df0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "2", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {2}],
+  Editable->False]], "Print",ExpressionUUID->"a3e1d4f8-1a47-4fd4-b771-\
+048d11bc0aed"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 7, " at ", {2, 5}, " failed. Must be one of ", {8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"c6abacea-dc45-4120-a021-\
+bd0596d1e3db"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"b4ec71ba-84aa-48cb-baab-\
+a395e360c25a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "2", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {2}],
+  Editable->False]], "Print",ExpressionUUID->"6995f156-bb04-4193-9a0d-\
+89e216cc9b6f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 3, " at ", {2, 4}, " failed. Must be one of ", {7, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"d0dbecf9-e44f-4c8e-83ac-\
+d66b0223312c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {2, 4}],
+  Editable->False]], "Print",ExpressionUUID->"ab8e6e5b-5a31-456d-bce0-\
+75ac89084ca2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"5406612f-dc21-469e-8276-\
+dc2cd8ee2658"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"496cb0ae-bb71-4037-a418-\
+4230d8ba007f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 2, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"44f997ba-2daf-4459-9da8-\
+033f69ec1018"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 1, " at ", {2, 5}, " failed. Must be one of ", {2, 3, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"6ba0fb78-18ed-4c22-a402-\
+343f9b4e703a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"ea89dce6-0a03-443b-b043-\
+2ba9e806593a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"e115ef80-3ef5-46de-b2df-\
+351a4ae94962"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "3", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {3}],
+  Editable->False]], "Print",ExpressionUUID->"89d38144-cea0-4e71-8dac-\
+fec22965443c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 2, " at ", {2, 5}, " failed. Must be one of ", {3, 8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"e02949ce-e18b-49ce-b247-\
+2f297792e760"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"adf5e1b5-5c3d-4896-8788-\
+690c91c2d312"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"b39c38ce-fb46-41f7-a584-\
+3251148621e9"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", "2", "}"}]}],
+  SequenceForm["Guess ", 1, " at ", {2, 7}, " failed. Must be one of ", {2}],
+  Editable->False]], "Print",ExpressionUUID->"77c93c3c-1a4f-487b-9173-\
+011b39d15eef"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guess \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" failed. Must be one of \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "9"}], "}"}]}],
+  SequenceForm[
+  "Guess ", 3, " at ", {2, 5}, " failed. Must be one of ", {8, 9}],
+  Editable->False]], "Print",ExpressionUUID->"ce1a0d05-0626-4bcc-a1bf-\
+71305c28605b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {2, 5}],
+  Editable->False]], "Print",ExpressionUUID->"91a5be2d-a01d-4a4d-9a7e-\
+caa8c96650ed"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {2, 7}],
+  Editable->False]], "Print",ExpressionUUID->"3dba3948-1c32-42ea-985f-\
+64ed23e55a2b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "8"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {2, 8}],
+  Editable->False]], "Print",ExpressionUUID->"9bac185c-986d-4431-859a-\
+04534f5a5508"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "7", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 7, " at ", {3, 1}],
+  Editable->False]], "Print",ExpressionUUID->"a05c80ed-5bcd-4dd1-a26c-\
+e108144ab211"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {3, 2}],
+  Editable->False]], "Print",ExpressionUUID->"2bbacbdb-5aff-422e-b091-\
+bdcb3dd7b5f4"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {3, 4}],
+  Editable->False]], "Print",ExpressionUUID->"2ada86a4-bfbc-457f-a99a-\
+d4df4845f6e8"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {3, 5}],
+  Editable->False]], "Print",ExpressionUUID->"1df09e3b-c6b8-4e43-a483-\
+9e558a12ae1a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {3, 7}],
+  Editable->False]], "Print",ExpressionUUID->"4f0e1d4f-02d3-474a-a837-\
+af51a0e1d605"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "8"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {3, 8}],
+  Editable->False]], "Print",ExpressionUUID->"d5c09e08-0277-42bc-b4ad-\
+1b2f80dc0dbb"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {4, 1}],
+  Editable->False]], "Print",ExpressionUUID->"44372b43-0bb2-4fe4-9818-\
+0a62d4e16e65"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {4, 2}],
+  Editable->False]], "Print",ExpressionUUID->"7a66ee65-b5ea-4933-8a42-\
+5e294d1357b2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {4, 3}],
+  Editable->False]], "Print",ExpressionUUID->"c436355a-4cdc-4292-a19b-\
+3f73db703b54"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {4, 4}],
+  Editable->False]], "Print",ExpressionUUID->"a9501cb4-5173-4d18-85c7-\
+fc1ec5e60148"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {4, 5}],
+  Editable->False]], "Print",ExpressionUUID->"08a7ddd2-a3fa-421d-9526-\
+cb2cf33cd405"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "6"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {4, 6}],
+  Editable->False]], "Print",ExpressionUUID->"a46b2987-d8c1-4f0a-8f72-\
+fe42daccede4"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {4, 7}],
+  Editable->False]], "Print",ExpressionUUID->"763025fd-7618-4707-9b9e-\
+e3844af9a5c0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {5, 1}],
+  Editable->False]], "Print",ExpressionUUID->"a1148c89-44b1-4889-b6a5-\
+8446d80e6268"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {5, 2}],
+  Editable->False]], "Print",ExpressionUUID->"91b44da4-5344-4a66-abe3-\
+f0ada9a31a19"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {5, 3}],
+  Editable->False]], "Print",ExpressionUUID->"678d3adf-7931-4ef6-a303-\
+ebad8e308e74"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {5, 4}],
+  Editable->False]], "Print",ExpressionUUID->"4b053913-dfff-4465-9457-\
+1e0ec8067daf"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"5", ",", "8"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {5, 8}],
+  Editable->False]], "Print",ExpressionUUID->"1c30b487-a332-43c5-bb89-\
+8045bdcabe97"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "8", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"6", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 8, " at ", {6, 1}],
+  Editable->False]], "Print",ExpressionUUID->"ee27bed9-9f23-4e56-b101-\
+f80480048105"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"6", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {6, 5}],
+  Editable->False]], "Print",ExpressionUUID->"9487361f-288b-45b6-ad49-\
+a524a695ca16"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"6", ",", "7"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {6, 7}],
+  Editable->False]], "Print",ExpressionUUID->"a676e727-42bd-48a1-9128-\
+4a7391939d1f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 5, " at ", {7, 1}],
+  Editable->False]], "Print",ExpressionUUID->"996528f3-1d6d-4dfb-b8e0-\
+63137c06178b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 3, " at ", {7, 2}],
+  Editable->False]], "Print",ExpressionUUID->"bddf186b-216d-44e2-b267-\
+9ba064794c9e"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 1, " at ", {7, 3}],
+  Editable->False]], "Print",ExpressionUUID->"4782f4e8-2212-4a4d-8ac2-\
+1120fbcd0326"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "4"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {7, 4}],
+  Editable->False]], "Print",ExpressionUUID->"e57417f3-b0f5-454b-bfe3-\
+44aaaa7ab06f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "5"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {7, 5}],
+  Editable->False]], "Print",ExpressionUUID->"237bd13e-a06b-4e2b-836a-\
+1f6e7ac2a460"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"7", ",", "6"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {7, 6}],
+  Editable->False]], "Print",ExpressionUUID->"24e7af9a-43f2-4356-a7d8-\
+d9148eb85b1d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "6", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "1"}], "}"}]}],
+  SequenceForm["Guessing ", 6, " at ", {8, 1}],
+  Editable->False]], "Print",ExpressionUUID->"c1344df0-b38a-4d8e-8862-\
+77566b33cafa"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "2"}], "}"}]}],
+  SequenceForm["Guessing ", 4, " at ", {8, 2}],
+  Editable->False]], "Print",ExpressionUUID->"9aa8876e-aa90-4e0f-9d84-\
+68aee04ae5dd"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Guessing \"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" at \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"8", ",", "3"}], "}"}]}],
+  SequenceForm["Guessing ", 2, " at ", {8, 3}],
+  Editable->False]], "Print",ExpressionUUID->"75a35b76-5d21-439b-a9d1-\
+4c7c817d9fbd"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"1.162`", " ", "Second"}], ",", GridBox[{
+     {"1", "2", "3", "4", "5", "6", "7", "8", "9"},
+     {"4", "5", "6", "7", "8", "9", "1", "2", "3"},
+     {"7", "8", "9", "1", "2", "3", "4", "5", "6"},
+     {"2", "1", "4", "3", "6", "5", "8", "9", "7"},
+     {"3", "6", "5", "8", "9", "7", "2", "1", "4"},
+     {"8", "9", "7", "2", "1", "4", "3", "6", "5"},
+     {"5", "3", "1", "6", "4", "2", "9", "7", "8"},
+     {"6", "4", "2", "9", "7", "8", "5", "3", "1"},
+     {"9", "7", "8", "5", "3", "1", "6", "4", "2"}
+    },
+    ColumnsEqual->True,
+    GridBoxDividers->{"Columns" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {True, True, True, 
+        AbsoluteThickness[2], True, True, 
+        AbsoluteThickness[2], {True}, True}, "RowsIndexed" -> {}},
+    RowsEqual->True]}], "}"}]], "Output",ExpressionUUID->"d256019c-f6b9-4a12-\
+9274-8a9bea95f900"]
+}, Open  ]]
+}, Closed]]
+}, Closed]]
+}, Open  ]]
+},
+WindowSize->{949, 827},
+WindowMargins->{{11, Automatic}, {Automatic, 6}},
+ShowSelection->True,
+FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (2017\:5e7410\:67082\
+\:65e5)",
+StyleDefinitions->"Report.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 173, 6, 70, "Title",ExpressionUUID->"6a594214-caef-4fc0-b132-ed293e82b886"],
+Cell[756, 30, 111, 3, 66, "Subtitle",ExpressionUUID->"1b1eb284-d6d0-48aa-9152-ead84b009d3f"],
+Cell[870, 35, 87, 0, 30, "Subsubtitle",ExpressionUUID->"89c46bb5-3698-4229-bc61-3c0a41749a86"],
+Cell[CellGroupData[{
+Cell[982, 39, 105, 1, 66, "Section",ExpressionUUID->"e0dcd2f4-0b45-4160-920d-9a124481615b"],
+Cell[1090, 42, 3285, 59, 683, "Text",ExpressionUUID->"9c73226a-1075-4f30-b557-365c29a2b738"],
+Cell[4378, 103, 2105, 37, 191, "InputOnly",ExpressionUUID->"e4a638d0-7a78-4ce8-9c95-c8493271f941"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6520, 145, 106, 1, 66, "Section",ExpressionUUID->"13d2a1ec-bfb8-4664-bf5b-745ffcd9cb12"],
+Cell[6629, 148, 239, 6, 70, "InputOnly",ExpressionUUID->"fc143c99-7e87-4fb2-82e0-d5ca9fd2afb0"],
+Cell[6871, 156, 3869, 95, 70, "InputOnly",ExpressionUUID->"376cf80b-b72a-45d5-91c9-240ff4d954b3"],
+Cell[10743, 253, 285, 5, 70, "Text",ExpressionUUID->"35f0d611-c684-430e-a29e-04538a8d2554"],
+Cell[11031, 260, 1274, 30, 70, "InputOnly",ExpressionUUID->"0f0fc881-cdc5-4f30-a8e2-391109428c6e"],
+Cell[12308, 292, 194, 3, 70, "Text",ExpressionUUID->"6b74a9be-3b4e-4242-829a-c134682da4a2"],
+Cell[12505, 297, 7032, 152, 70, "InputOnly",ExpressionUUID->"e34b40c4-8f30-49d8-a9d3-36533e0a8831"],
+Cell[19540, 451, 570, 16, 70, "InputOnly",ExpressionUUID->"05272fa0-374a-46d7-8258-3aa3eb83ada9"],
+Cell[CellGroupData[{
+Cell[20135, 471, 82, 0, 70, "Subsection",ExpressionUUID->"a4462ac6-dffc-4fa5-8077-b1640c77a7e5"],
+Cell[20220, 473, 303, 8, 70, "InputOnly",ExpressionUUID->"1d247834-8da2-4ad4-b06c-fb6ace4d9057"],
+Cell[20526, 483, 187, 3, 70, "Text",ExpressionUUID->"04922f5b-a0ab-447c-bab2-175e4f70a402"],
+Cell[20716, 488, 559, 17, 70, "InputOnly",ExpressionUUID->"6619af09-ada2-4a46-b5c4-e571e424b0f5"],
+Cell[21278, 507, 649, 18, 70, "InputOnly",ExpressionUUID->"54643be1-a556-444f-a572-91c0792c9227"],
+Cell[21930, 527, 350, 5, 70, "Text",ExpressionUUID->"9766674a-a32e-444f-82ab-9fb7e882e259"],
+Cell[22283, 534, 471, 13, 70, "InputOnly",ExpressionUUID->"6a71367a-94cd-4f22-bbbc-124ccb2f16d0"],
+Cell[22757, 549, 215, 3, 70, "Text",ExpressionUUID->"405432bf-ce86-41e3-8add-d6b39c561273"],
+Cell[22975, 554, 1478, 42, 70, "InputOnly",ExpressionUUID->"6cf62b14-0669-41ec-8022-d4224c3f4df1"],
+Cell[24456, 598, 171, 3, 70, "Text",ExpressionUUID->"408a3aff-cc5d-4a42-a907-8662e13b572a"],
+Cell[24630, 603, 272, 7, 70, "InputOnly",ExpressionUUID->"2fc77b6d-c0dc-48ea-a909-70645aa78296"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[24951, 616, 108, 1, 40, "Section",ExpressionUUID->"3352e2ac-327c-4d3c-a7f6-7be1288a9412"],
+Cell[CellGroupData[{
+Cell[25084, 621, 96, 0, 70, "Subsection",ExpressionUUID->"5524f349-3958-4245-a816-54b1fb5a8875"],
+Cell[25183, 623, 416, 6, 70, "Text",ExpressionUUID->"da6ee1f5-821a-4f0a-a965-fd4734b50bd6"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25636, 634, 100, 0, 70, "Subsection",ExpressionUUID->"e34b4b8b-ffb6-4905-bb61-c35004c72aa9"],
+Cell[25739, 636, 618, 9, 70, "Text",ExpressionUUID->"3a678c7f-f78d-48fc-b8a0-bed0f8196a03"],
+Cell[26360, 647, 5014, 153, 70, "InputOnly",ExpressionUUID->"b0b962d4-b005-42d3-b0cc-361095401dfc",
+ Evaluatable->False],
+Cell[31377, 802, 402, 6, 70, "Text",ExpressionUUID->"c31e69f7-51be-4443-9e57-9ef84cce6b4c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[31816, 813, 89, 0, 70, "Subsection",ExpressionUUID->"cc844f55-46c1-4f9d-882f-d0235839d462"],
+Cell[31908, 815, 243, 4, 70, "Text",ExpressionUUID->"cf42a48b-2d8e-44f9-a07c-1289d35bc4c9"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[32200, 825, 106, 1, 40, "Section",ExpressionUUID->"b3163e41-fbcc-490e-89b2-6f08bf450f4f"],
+Cell[CellGroupData[{
+Cell[32331, 830, 89, 0, 70, "Subsection",ExpressionUUID->"afbe128d-19b3-4121-aa61-09b1bfc21bed"],
+Cell[CellGroupData[{
+Cell[32445, 834, 942, 20, 70, "Input",ExpressionUUID->"3f06d5f2-f64c-4033-800b-2d570282836c"],
+Cell[33390, 856, 888, 19, 70, "Output",ExpressionUUID->"e60d8b5e-f824-480d-a8dd-caaef62de4e9"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[34315, 880, 942, 20, 70, "Input",ExpressionUUID->"1ee33347-93ce-4258-abfc-bf0d0e7a4738"],
+Cell[35260, 902, 888, 19, 70, "Output",ExpressionUUID->"2675df71-dd85-429c-a7bd-8f1a954afb5f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[36185, 926, 942, 20, 70, "Input",ExpressionUUID->"30b52d82-b521-45e2-91ce-f412ec0e2883"],
+Cell[37130, 948, 888, 19, 70, "Output",ExpressionUUID->"b9eb5158-813e-4d5c-b696-85e05f7e69c6"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[38067, 973, 83, 0, 70, "Subsection",ExpressionUUID->"92433ca5-33b0-4a86-9b24-1facfc4c1fd4"],
+Cell[CellGroupData[{
+Cell[38175, 977, 942, 20, 70, "Input",ExpressionUUID->"bb4c5421-a035-4362-9e80-3056d3cb48a1"],
+Cell[39120, 999, 888, 19, 70, "Output",ExpressionUUID->"0a28a744-7bc8-41ce-88cc-f631119c0fe4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[40045, 1023, 1024, 22, 70, "Input",ExpressionUUID->"7c1df76d-9fb6-4504-af0a-e48d67230e05"],
+Cell[41072, 1047, 343, 8, 70, "Print",ExpressionUUID->"d94c24a7-e5b4-452e-943b-25f2a8636d7c"],
+Cell[41418, 1057, 343, 8, 70, "Print",ExpressionUUID->"f3d36b73-fbfe-47f0-903e-87bea99871b8"],
+Cell[41764, 1067, 343, 8, 70, "Print",ExpressionUUID->"463d6939-4173-4718-a7bb-bafb1dfa9d21"],
+Cell[42110, 1077, 888, 19, 70, "Output",ExpressionUUID->"b4f6840d-51ae-4541-9eb6-2a848bff53fd"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[43035, 1101, 1797, 34, 70, "Input",ExpressionUUID->"846b7c96-6fa9-4499-9541-a3f6f5d428b7"],
+Cell[44835, 1137, 343, 8, 70, "Print",ExpressionUUID->"715e5103-31f1-4248-a5c6-a5b0f40e5bc0"],
+Cell[45181, 1147, 542, 13, 70, "Print",ExpressionUUID->"b0a5bf71-fe24-4cce-bd13-2220d85459fd"],
+Cell[45726, 1162, 343, 8, 70, "Print",ExpressionUUID->"0fb02f84-639a-44d3-b92b-bfd8f02e6375"],
+Cell[46072, 1172, 529, 13, 70, "Print",ExpressionUUID->"e97acc64-e344-446b-af2b-0ffed83c22e2"],
+Cell[46604, 1187, 343, 8, 70, "Print",ExpressionUUID->"6b2ceaab-674d-43d8-9223-3d06a46b97b3"],
+Cell[46950, 1197, 343, 8, 70, "Print",ExpressionUUID->"2b5117c2-6251-4ca8-bbe5-4b8eba81b479"],
+Cell[47296, 1207, 516, 13, 70, "Print",ExpressionUUID->"df762c34-c12f-45ad-b3ae-deeaaac4b185"],
+Cell[47815, 1222, 343, 8, 70, "Print",ExpressionUUID->"1ffe5bd3-a109-401b-b348-385c63f70995"],
+Cell[48161, 1232, 485, 11, 70, "Print",ExpressionUUID->"ac42427f-74ba-4f8f-b064-5dda582bd26a"],
+Cell[48649, 1245, 343, 8, 70, "Print",ExpressionUUID->"0b2e4417-61d5-4be3-9b62-d1859e613fcc"],
+Cell[48995, 1255, 516, 13, 70, "Print",ExpressionUUID->"30bbbd65-a37f-4dcd-a57b-e43934603eed"],
+Cell[49514, 1270, 343, 8, 70, "Print",ExpressionUUID->"756a7dfa-b18d-4f6a-8423-b9d8eca0221b"],
+Cell[49860, 1280, 343, 8, 70, "Print",ExpressionUUID->"0dc06840-00ac-45ff-aa79-f14c1e3234d0"],
+Cell[50206, 1290, 485, 11, 70, "Print",ExpressionUUID->"5dd08c2f-1b01-4e73-8dab-1c8fab862a29"],
+Cell[50694, 1303, 343, 8, 70, "Print",ExpressionUUID->"421709ae-0ff7-430c-a97d-9ae6d64e6e67"],
+Cell[51040, 1313, 516, 13, 70, "Print",ExpressionUUID->"28326f7e-65c7-4f41-8d59-3caeca1c3f9b"],
+Cell[51559, 1328, 343, 8, 70, "Print",ExpressionUUID->"9360608a-6b04-4fd4-92fb-fe8368a66401"],
+Cell[51905, 1338, 485, 11, 70, "Print",ExpressionUUID->"fe3f312f-b5da-49e1-a181-09abfb6959ef"],
+Cell[52393, 1351, 485, 11, 70, "Print",ExpressionUUID->"6f07983b-15ad-45be-bcf0-940dac8a12fc"],
+Cell[52881, 1364, 888, 19, 70, "Output",ExpressionUUID->"b03452d2-01e3-4a9e-bf7c-6a24b462a8f4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53806, 1388, 896, 20, 70, "Input",ExpressionUUID->"953bbe71-96c4-43b8-8599-e5c33597624c"],
+Cell[54705, 1410, 888, 19, 70, "Output",ExpressionUUID->"c1399ebb-18b8-4833-9cb4-3aa83d17ac9c"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[55642, 1435, 92, 0, 70, "Subsection",ExpressionUUID->"40706363-bc5d-4c7b-969a-d10db9929d05"],
+Cell[55737, 1437, 221, 3, 70, "Text",ExpressionUUID->"1f11378e-a50a-4dd3-bb02-a4c753d4e270"],
+Cell[CellGroupData[{
+Cell[55983, 1444, 1862, 34, 70, "InputOnly",ExpressionUUID->"6e4018eb-c90b-40db-8147-c357db035931"],
+Cell[57848, 1480, 888, 19, 70, "Output",ExpressionUUID->"42e74bc4-cff8-4eb2-8361-c51a803fd3e9"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[58785, 1505, 96, 0, 70, "Subsection",ExpressionUUID->"8cd1268b-e7a7-43e1-8389-440fc79971ff"],
+Cell[58884, 1507, 123, 0, 70, "Text",ExpressionUUID->"95ca5c9f-e78f-49ff-a28a-9c4b81bd9e23"],
+Cell[CellGroupData[{
+Cell[59032, 1511, 898, 20, 70, "Input",ExpressionUUID->"5af06362-7cfd-4dfa-9dd7-af299536a7d7"],
+Cell[59933, 1533, 95, 0, 70, "Output",ExpressionUUID->"e5958c00-e151-4c64-9523-79b198b40e30"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[60077, 1539, 108, 0, 70, "Subsection",ExpressionUUID->"c2019090-bcc6-4353-8918-231350f50f91"],
+Cell[60188, 1541, 272, 4, 70, "Text",ExpressionUUID->"213146fb-124d-4423-bd24-310cbbc95e2f"],
+Cell[CellGroupData[{
+Cell[60485, 1549, 1077, 23, 70, "Input",ExpressionUUID->"86c1cd4d-583d-421a-9839-1f5e30ab5b5d"],
+Cell[61565, 1574, 343, 8, 70, "Print",ExpressionUUID->"a9169bed-40c2-4c02-9bdd-cc3012106107"],
+Cell[61911, 1584, 343, 8, 70, "Print",ExpressionUUID->"a6a2dc63-45ce-4452-817b-9450db92b5af"],
+Cell[62257, 1594, 343, 8, 70, "Print",ExpressionUUID->"9e797584-11d6-4491-9c3a-749d1ff5681a"],
+Cell[62603, 1604, 343, 8, 70, "Print",ExpressionUUID->"776f699f-8e18-4e2c-bc04-c9971d2f9240"],
+Cell[62949, 1614, 343, 8, 70, "Print",ExpressionUUID->"c6243661-b581-44d2-bf30-01cd7f7aaf31"],
+Cell[63295, 1624, 343, 8, 70, "Print",ExpressionUUID->"0cffe0fa-7a14-4ae3-9da4-dec0cd659fdd"],
+Cell[63641, 1634, 343, 8, 70, "Print",ExpressionUUID->"86330f7c-96c0-4bc3-a2f4-4ddca247e75c"],
+Cell[63987, 1644, 343, 8, 70, "Print",ExpressionUUID->"d5143ec1-6fe0-429b-a187-94e51f2cded2"],
+Cell[64333, 1654, 343, 8, 70, "Print",ExpressionUUID->"09ea3b9b-6b49-4f51-b075-3b37f5ff6d0d"],
+Cell[64679, 1664, 343, 8, 70, "Print",ExpressionUUID->"6c8721da-3fe8-494f-b112-a67964bc26e0"],
+Cell[65025, 1674, 343, 8, 70, "Print",ExpressionUUID->"a8f5a2cc-4049-4f51-8e6f-d041efcb5c09"],
+Cell[65371, 1684, 343, 8, 70, "Print",ExpressionUUID->"6bfd7941-a20d-43b6-8e2b-889369183328"],
+Cell[65717, 1694, 343, 8, 70, "Print",ExpressionUUID->"98dd190e-f85b-4443-9a29-5a9587d58cea"],
+Cell[66063, 1704, 542, 13, 70, "Print",ExpressionUUID->"081ffe28-2124-4bb6-9026-cb605cd1644c"],
+Cell[66608, 1719, 343, 8, 70, "Print",ExpressionUUID->"65d07467-c755-487b-9a03-4934813e095c"],
+Cell[66954, 1729, 529, 13, 70, "Print",ExpressionUUID->"a7f70d71-90a7-4513-8880-57406fb2d0ac"],
+Cell[67486, 1744, 343, 8, 70, "Print",ExpressionUUID->"d9bb2ace-1767-42ae-bddc-7442e9e3173e"],
+Cell[67832, 1754, 343, 8, 70, "Print",ExpressionUUID->"38a855aa-d2d6-4447-8a6f-f3557e342058"],
+Cell[68178, 1764, 485, 11, 70, "Print",ExpressionUUID->"51505f62-0425-4767-a082-f794852a14ed"],
+Cell[68666, 1777, 516, 13, 70, "Print",ExpressionUUID->"bb40fb01-67ba-4fb7-a71a-bc13cabf9c4f"],
+Cell[69185, 1792, 343, 8, 70, "Print",ExpressionUUID->"358efaa1-faaf-47e8-bdaa-36c988af2166"],
+Cell[69531, 1802, 485, 11, 70, "Print",ExpressionUUID->"cf70b2c5-47d1-4c48-8679-41d20b5b3c90"],
+Cell[70019, 1815, 555, 13, 70, "Print",ExpressionUUID->"214cfdb1-1957-46fb-aa2f-ed339d8a4a19"],
+Cell[70577, 1830, 343, 8, 70, "Print",ExpressionUUID->"5568c784-20c6-4804-9c48-f984d8fe4fb5"],
+Cell[70923, 1840, 343, 8, 70, "Print",ExpressionUUID->"0779c17f-3767-47cc-b134-5484f0acd409"],
+Cell[71269, 1850, 542, 13, 70, "Print",ExpressionUUID->"1011d15d-f153-494e-b8b4-f51951fceb83"],
+Cell[71814, 1865, 343, 8, 70, "Print",ExpressionUUID->"7b4e6279-84f5-488a-a380-34dce2d26588"],
+Cell[72160, 1875, 529, 13, 70, "Print",ExpressionUUID->"57091c64-bd44-47b3-9db9-d69b36ff2837"],
+Cell[72692, 1890, 343, 8, 70, "Print",ExpressionUUID->"f02eaf4f-4e3a-4402-abfe-1cfd169bc1bb"],
+Cell[73038, 1900, 343, 8, 70, "Print",ExpressionUUID->"273806b0-8991-47a9-ad27-268dc74a424e"],
+Cell[73384, 1910, 485, 11, 70, "Print",ExpressionUUID->"3232dbf4-2ad2-413c-8665-c9afab0036d0"],
+Cell[73872, 1923, 516, 13, 70, "Print",ExpressionUUID->"5e90e196-e487-47cc-a6eb-f4aa764c2894"],
+Cell[74391, 1938, 343, 8, 70, "Print",ExpressionUUID->"fd08d451-61e5-4363-a1f4-b4fabfa80b7f"],
+Cell[74737, 1948, 485, 11, 70, "Print",ExpressionUUID->"bdb79d17-81be-4d3d-bc54-392d079bb005"],
+Cell[75225, 1961, 542, 13, 70, "Print",ExpressionUUID->"70bcb88e-d1c6-4085-b35b-185ca75edc9b"],
+Cell[75770, 1976, 343, 8, 70, "Print",ExpressionUUID->"476f063a-bde9-4dcf-923f-cebc1ab19f07"],
+Cell[76116, 1986, 343, 8, 70, "Print",ExpressionUUID->"3e1e88d2-e068-404e-826f-915d949753ca"],
+Cell[76462, 1996, 542, 13, 70, "Print",ExpressionUUID->"2e5591f7-49b8-4407-a1c5-336a51eff277"],
+Cell[77007, 2011, 343, 8, 70, "Print",ExpressionUUID->"25fe9187-042e-41da-b97d-679de559dd18"],
+Cell[77353, 2021, 529, 13, 70, "Print",ExpressionUUID->"0446f688-00bd-4392-a595-ca339f2ce9c9"],
+Cell[77885, 2036, 343, 8, 70, "Print",ExpressionUUID->"c3462e03-9029-4beb-a59e-5536ab2b9617"],
+Cell[78231, 2046, 343, 8, 70, "Print",ExpressionUUID->"8248795d-d4e6-4339-8ae5-e6d4b7354df0"],
+Cell[78577, 2056, 485, 11, 70, "Print",ExpressionUUID->"a3e1d4f8-1a47-4fd4-b771-048d11bc0aed"],
+Cell[79065, 2069, 516, 13, 70, "Print",ExpressionUUID->"c6abacea-dc45-4120-a021-bd0596d1e3db"],
+Cell[79584, 2084, 343, 8, 70, "Print",ExpressionUUID->"b4ec71ba-84aa-48cb-baab-a395e360c25a"],
+Cell[79930, 2094, 485, 11, 70, "Print",ExpressionUUID->"6995f156-bb04-4193-9a0d-89e216cc9b6f"],
+Cell[80418, 2107, 529, 13, 70, "Print",ExpressionUUID->"d0dbecf9-e44f-4c8e-83ac-d66b0223312c"],
+Cell[80950, 2122, 343, 8, 70, "Print",ExpressionUUID->"ab8e6e5b-5a31-456d-bce0-75ac89084ca2"],
+Cell[81296, 2132, 343, 8, 70, "Print",ExpressionUUID->"5406612f-dc21-469e-8276-dc2cd8ee2658"],
+Cell[81642, 2142, 343, 8, 70, "Print",ExpressionUUID->"496cb0ae-bb71-4037-a418-4230d8ba007f"],
+Cell[81988, 2152, 485, 11, 70, "Print",ExpressionUUID->"44f997ba-2daf-4459-9da8-033f69ec1018"],
+Cell[82476, 2165, 542, 13, 70, "Print",ExpressionUUID->"6ba0fb78-18ed-4c22-a402-343f9b4e703a"],
+Cell[83021, 2180, 343, 8, 70, "Print",ExpressionUUID->"ea89dce6-0a03-443b-b043-2ba9e806593a"],
+Cell[83367, 2190, 343, 8, 70, "Print",ExpressionUUID->"e115ef80-3ef5-46de-b2df-351a4ae94962"],
+Cell[83713, 2200, 485, 11, 70, "Print",ExpressionUUID->"89d38144-cea0-4e71-8dac-fec22965443c"],
+Cell[84201, 2213, 529, 13, 70, "Print",ExpressionUUID->"e02949ce-e18b-49ce-b247-2f297792e760"],
+Cell[84733, 2228, 343, 8, 70, "Print",ExpressionUUID->"adf5e1b5-5c3d-4896-8788-690c91c2d312"],
+Cell[85079, 2238, 343, 8, 70, "Print",ExpressionUUID->"b39c38ce-fb46-41f7-a584-3251148621e9"],
+Cell[85425, 2248, 485, 11, 70, "Print",ExpressionUUID->"77c93c3c-1a4f-487b-9173-011b39d15eef"],
+Cell[85913, 2261, 516, 13, 70, "Print",ExpressionUUID->"ce1a0d05-0626-4bcc-a1bf-71305c28605b"],
+Cell[86432, 2276, 343, 8, 70, "Print",ExpressionUUID->"91a5be2d-a01d-4a4d-9a7e-caa8c96650ed"],
+Cell[86778, 2286, 343, 8, 70, "Print",ExpressionUUID->"3dba3948-1c32-42ea-985f-64ed23e55a2b"],
+Cell[87124, 2296, 343, 8, 70, "Print",ExpressionUUID->"9bac185c-986d-4431-859a-04534f5a5508"],
+Cell[87470, 2306, 343, 8, 70, "Print",ExpressionUUID->"a05c80ed-5bcd-4dd1-a26c-e108144ab211"],
+Cell[87816, 2316, 343, 8, 70, "Print",ExpressionUUID->"2bbacbdb-5aff-422e-b091-bdcb3dd7b5f4"],
+Cell[88162, 2326, 343, 8, 70, "Print",ExpressionUUID->"2ada86a4-bfbc-457f-a99a-d4df4845f6e8"],
+Cell[88508, 2336, 343, 8, 70, "Print",ExpressionUUID->"1df09e3b-c6b8-4e43-a483-9e558a12ae1a"],
+Cell[88854, 2346, 343, 8, 70, "Print",ExpressionUUID->"4f0e1d4f-02d3-474a-a837-af51a0e1d605"],
+Cell[89200, 2356, 343, 8, 70, "Print",ExpressionUUID->"d5c09e08-0277-42bc-b4ad-1b2f80dc0dbb"],
+Cell[89546, 2366, 343, 8, 70, "Print",ExpressionUUID->"44372b43-0bb2-4fe4-9818-0a62d4e16e65"],
+Cell[89892, 2376, 343, 8, 70, "Print",ExpressionUUID->"7a66ee65-b5ea-4933-8a42-5e294d1357b2"],
+Cell[90238, 2386, 343, 8, 70, "Print",ExpressionUUID->"c436355a-4cdc-4292-a19b-3f73db703b54"],
+Cell[90584, 2396, 343, 8, 70, "Print",ExpressionUUID->"a9501cb4-5173-4d18-85c7-fc1ec5e60148"],
+Cell[90930, 2406, 343, 8, 70, "Print",ExpressionUUID->"08a7ddd2-a3fa-421d-9526-cb2cf33cd405"],
+Cell[91276, 2416, 343, 8, 70, "Print",ExpressionUUID->"a46b2987-d8c1-4f0a-8f72-fe42daccede4"],
+Cell[91622, 2426, 343, 8, 70, "Print",ExpressionUUID->"763025fd-7618-4707-9b9e-e3844af9a5c0"],
+Cell[91968, 2436, 343, 8, 70, "Print",ExpressionUUID->"a1148c89-44b1-4889-b6a5-8446d80e6268"],
+Cell[92314, 2446, 343, 8, 70, "Print",ExpressionUUID->"91b44da4-5344-4a66-abe3-f0ada9a31a19"],
+Cell[92660, 2456, 343, 8, 70, "Print",ExpressionUUID->"678d3adf-7931-4ef6-a303-ebad8e308e74"],
+Cell[93006, 2466, 343, 8, 70, "Print",ExpressionUUID->"4b053913-dfff-4465-9457-1e0ec8067daf"],
+Cell[93352, 2476, 343, 8, 70, "Print",ExpressionUUID->"1c30b487-a332-43c5-bb89-8045bdcabe97"],
+Cell[93698, 2486, 343, 8, 70, "Print",ExpressionUUID->"ee27bed9-9f23-4e56-b101-f80480048105"],
+Cell[94044, 2496, 343, 8, 70, "Print",ExpressionUUID->"9487361f-288b-45b6-ad49-a524a695ca16"],
+Cell[94390, 2506, 343, 8, 70, "Print",ExpressionUUID->"a676e727-42bd-48a1-9128-4a7391939d1f"],
+Cell[94736, 2516, 343, 8, 70, "Print",ExpressionUUID->"996528f3-1d6d-4dfb-b8e0-63137c06178b"],
+Cell[95082, 2526, 343, 8, 70, "Print",ExpressionUUID->"bddf186b-216d-44e2-b267-9ba064794c9e"],
+Cell[95428, 2536, 343, 8, 70, "Print",ExpressionUUID->"4782f4e8-2212-4a4d-8ac2-1120fbcd0326"],
+Cell[95774, 2546, 343, 8, 70, "Print",ExpressionUUID->"e57417f3-b0f5-454b-bfe3-44aaaa7ab06f"],
+Cell[96120, 2556, 343, 8, 70, "Print",ExpressionUUID->"237bd13e-a06b-4e2b-836a-1f6e7ac2a460"],
+Cell[96466, 2566, 343, 8, 70, "Print",ExpressionUUID->"24e7af9a-43f2-4356-a7d8-d9148eb85b1d"],
+Cell[96812, 2576, 343, 8, 70, "Print",ExpressionUUID->"c1344df0-b38a-4d8e-8862-77566b33cafa"],
+Cell[97158, 2586, 343, 8, 70, "Print",ExpressionUUID->"9aa8876e-aa90-4e0f-9d84-68aee04ae5dd"],
+Cell[97504, 2596, 343, 8, 70, "Print",ExpressionUUID->"75a35b76-5d21-439b-a9d1-4c7c817d9fbd"],
+Cell[97850, 2606, 1003, 22, 70, "Output",ExpressionUUID->"d256019c-f6b9-4a12-9274-8a9bea95f900"]
+}, Open  ]]
+}, Closed]]
+}, Closed]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
