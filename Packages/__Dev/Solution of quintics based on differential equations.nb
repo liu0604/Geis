@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     64012,       1927]
-NotebookOptionsPosition[     58349,       1819]
-NotebookOutlinePosition[     59232,       1847]
-CellTagsIndexPosition[     59189,       1844]
+NotebookDataLength[     70363,       2104]
+NotebookOptionsPosition[     64611,       1995]
+NotebookOutlinePosition[     65494,       2023]
+CellTagsIndexPosition[     65451,       2020]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1815,7 +1815,183 @@ Cell["\<\
 \>", "Input",
  AspectRatioFixed->
   True,ExpressionUUID->"b6a9e574-6bb0-4949-a73d-20685d7ed6de"]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", ",", 
+       RowBox[{"GaloisGroup", "[", "#", "]"}]}], "}"}], "&"}], "/@", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"20", " ", "x"}], "+", "32"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"x", "^", "4"}], "-", 
+       RowBox[{"4", " ", 
+        RowBox[{"x", "^", "3"}]}], "-", 
+       RowBox[{"3", " ", 
+        RowBox[{"x", "^", "2"}]}], "+", 
+       RowBox[{"3", " ", "x"}], "+", "1"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"x", "^", "4"}], "-", 
+       RowBox[{"12", " ", 
+        RowBox[{"x", "^", "3"}]}], "-", 
+       RowBox[{"21", " ", 
+        RowBox[{"x", "^", "2"}]}], "+", "x", "+", "5"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", "2"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"20", " ", "x"}], "+", "16"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "-", 
+       RowBox[{"5", " ", "x"}], "+", "12"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"15", " ", "x"}], "+", "12"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "+", 
+       RowBox[{"5", " ", 
+        RowBox[{"x", "^", "3"}]}], "+", 
+       RowBox[{"10", " ", 
+        RowBox[{"x", "^", "2"}]}], "+", 
+       RowBox[{"5", " ", "x"}], "+", "4"}], ",", 
+      RowBox[{
+       RowBox[{"x", "^", "5"}], "-", 
+       RowBox[{"33826005", " ", "x"}], "-", "4140303012"}]}], "}"}]}], "//", 
+   "TableForm"}], "//", "TraditionalForm"}], "\[IndentingNewLine]", 
+ RowBox[{" ", 
+  RowBox[{"legend", "=", 
+   RowBox[{"Framed", "@", 
+    RowBox[{"TableForm", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Yellow", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<R\>\"", "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Red", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<Subscript[S, n]\>\"", "]"}]}], 
+         "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Blue", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<Subscript[M, n]\>\"", "]"}]}], 
+         "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Green", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<Subscript[D, n]\>\"", "]"}]}], 
+         "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Purple", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<Subscript[A, n]\>\"", "]"}]}], 
+         "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"LightBlue", ",", 
+          RowBox[{"TraditionalForm", "[", "\"\<Subscript[C, n]\>\"", "]"}]}], 
+         "}"}]}], "}"}], ",", 
+      RowBox[{"TableSpacing", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"1", ",", "2"}], "}"}]}]}], "]"}]}]}], " ", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"colorRule", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", "}"}], "\[RuleDelayed]", "Yellow"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"SymmetricGroup", "[", "1", "]"}], ",", 
+         RowBox[{"SymmetricGroup", "[", "1", "]"}], ",", 
+         RowBox[{"SymmetricGroup", "[", "1", "]"}], ",", 
+         RowBox[{"SymmetricGroup", "[", "1", "]"}], ",", 
+         RowBox[{"SymmetricGroup", "[", "1", "]"}]}], "}"}], "\[RuleDelayed]",
+        "Black"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"SymmetricGroup", "[", "n_", "]"}], "}"}], "\[RuleDelayed]", 
+       "Red"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"MetacyclicGroup", "[", "n_", "]"}], "}"}], "\[RuleDelayed]", 
+       "Blue"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"DihedralGroup", "[", "n_", "]"}], "}"}], "\[RuleDelayed]", 
+       "Green"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"AlternatingGroup", "[", "n_", "]"}], "}"}], "\[RuleDelayed]",
+        "Purple"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"CyclicGroup", "[", "n_", "]"}], "}"}], "\[RuleDelayed]", 
+       "LightBlue"}]}], "}"}], " ", 
+    RowBox[{"GaloisPlot", "[", 
+     RowBox[{"k_", ",", 
+      RowBox[{"dx_:", ".07"}]}], "]"}]}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "n"}], "}"}], ",", 
+     RowBox[{"Quiet", "[", 
+      RowBox[{
+       RowBox[{"Legended", "[", 
+        RowBox[{
+         RowBox[{"Graphics", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"GaloisGroup", "[", 
+                 RowBox[{
+                  RowBox[{"x", "^", "5"}], "+", 
+                  RowBox[{"p", " ", "x"}], "+", "q"}], "]"}], ",", 
+                RowBox[{"Rectangle", "[", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"p", ",", "q"}], "}"}], "+", "dx", "-", ".5"}], 
+                  ",", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"p", ",", "q"}], "}"}], "+", 
+                   RowBox[{"(", 
+                    RowBox[{"1", "-", "dx"}], ")"}], "-", ".5"}]}], "]"}]}], 
+               "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"p", ",", 
+                RowBox[{"-", "k"}], ",", "k"}], "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"q", ",", 
+                RowBox[{"-", "k"}], ",", "k"}], "}"}]}], "]"}], "/.", 
+            "colorRule"}], ",", 
+           RowBox[{"AspectRatio", "\[Rule]", "Automatic"}], ",", 
+           RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+           RowBox[{"FrameLabel", "\[Rule]", 
+            RowBox[{
+            "TraditionalForm", "[", 
+             "\"\<x^5+p  x+q \:7684\:4f3d\:7f57\:74e6\:7fa4\>\"", "]"}]}]}], 
+          "]"}], ",", 
+         RowBox[{"Placed", "[", 
+          RowBox[{"legend", ",", "Right"}], "]"}]}], "]"}], ",", 
+       RowBox[{"GaloisGroup", "::", "\"\<red\>\""}]}], "]"}]}], 
+    "]"}]}]}]}], "Input",
+ CellChangeTimes->{{3.723708421766266*^9, 
+  3.7237084367000675`*^9}},ExpressionUUID->"5d7a0d4d-11b7-460f-a077-\
+b2a54af8f2a2"]
 },
 WindowToolbars->{},
 CellGrouping->Manual,
@@ -1887,7 +2063,7 @@ Cell[23760, 739, 156, 3, 34, "Text",ExpressionUUID->"716e9175-4826-4489-8edf-664
 Cell[CellGroupData[{
 Cell[23941, 746, 728, 17, 46, "Input",ExpressionUUID->"174d8e2f-a671-41ba-9e08-77ba4e6f0858"],
 Cell[CellGroupData[{
-Cell[24694, 767, 1668, 53, 50, InheritFromParent,ExpressionUUID->"ccea3271-a703-419e-a2ee-b54b501fa5a6"],
+Cell[24694, 767, 1668, 53, 50, "Input",ExpressionUUID->"ccea3271-a703-419e-a2ee-b54b501fa5a6"],
 Cell[26365, 822, 1288, 43, 54, "Output",ExpressionUUID->"dec7cd6e-e74c-4146-89ca-f34bfa63fedf"]
 }, Open  ]],
 Cell[CellGroupData[{
@@ -1928,7 +2104,8 @@ Cell[56104, 1747, 1214, 39, 64, "Output",ExpressionUUID->"6504f189-b46e-4144-83d
 Cell[57333, 1789, 428, 8, 56, "Text",ExpressionUUID->"5e749789-db54-4f4c-a06c-309ddda781ed",
  Evaluatable->False],
 Cell[57764, 1799, 569, 17, 222, "Input",ExpressionUUID->"b6a9e574-6bb0-4949-a73d-20685d7ed6de"]
-}, Open  ]]
+}, Open  ]],
+Cell[58348, 1819, 6259, 174, 262, "Input",ExpressionUUID->"5d7a0d4d-11b7-460f-a077-b2a54af8f2a2"]
 }
 ]
 *)
